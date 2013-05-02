@@ -45,7 +45,7 @@
         // reverts the omniture config to it's original settings
         trackAjaxAndRevert: function (url, omnitureConfig) {
             var self = $.cambio.mm;
-            self.mm.trackAjax(url, omnitureConfig);
+            self.trackAjax(url, omnitureConfig);
             self.revert();
         },
 
@@ -62,7 +62,12 @@
                 // remove new props
                 for (key in s_265) {
                     if (!(key in orig)) {
-                        s_265[key] = undefined;
+                        var type = typeof s_265[key];
+                        // only unset properties that seem to be
+                        // configuration values
+                        if (type === 'string' || type === 'number') {
+                            s_265[key] = undefined;
+                        }
                     }
                 }
             }
@@ -83,8 +88,12 @@
                     for (var key in window.s_265) {
                         var value = window.s_265[key];
                         // TODO: not actually sure if we should skip objects, 
-                        // or even if this whole clone thing is kosher
-                        if (typeof value !== 'function' && typeof value !== 'object') {
+                        // or even if this whole clone thing is kosher,
+                        // but we're trying to copy off all of the
+                        // configuration values.  Consider using specific
+                        // properties like prop1, prop2, etc.
+                        var type = typeof value;
+                        if (type === 'string' || type === 'number') {
                             data[key] = window.s_265[key];
                         }
                     }
