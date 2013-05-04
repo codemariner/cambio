@@ -36,8 +36,10 @@
                 window.s_265.t();
             }
             // beacon call
-            if (window.bN_cfg) {
-                window.bN.view();
+            if (window.bN_cfg && window.bN) {
+                // use init here just in case bN_cfg may have been changed
+                // this will still make the beacon call
+                window.bN.init(window.bN_cfg);
             }
         },
 
