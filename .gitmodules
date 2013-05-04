@@ -1,0 +1,3 @@
+[submodule "vendor/nivo"]
+	path = vendor/nivo
+	url = git@github.com:codemariner/Nivo-Slider.git
