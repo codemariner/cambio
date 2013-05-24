@@ -1,4 +1,5 @@
-(function ($, FB) {
+/*global cambio:false*/
+(function ($, FB, cambio) {
     "use strict";
 
     $.fn.cambioEmbeddedGallery = function (options) {
@@ -219,9 +220,9 @@
         // add the sharing stuff only when we actually enter fullscreen
         // mode the first time
         $fullScreenKnot.on('enteredFullscreen', function () {
-           if(typeof(cambio)!='undefined' && cambio.wallpaperAd==1){
+            if (typeof(cambio) !== 'undefined' && cambio.wallpaperAd === 1) {
                 $('html body').animate({scrollTop: $fullScreenKnot.position().top}, 'slow');  
-            }else{
+            } else {
                 $fullScreenKnot.scrollParent().animate({scrollTop: $fullScreenKnot.position().top}, 'slow');
             }
             $fullScreenKnot.data('knot')._track();
@@ -230,4 +231,4 @@
         return $fullScreenKnot;
     };
 
-})(jQuery, window.FB);
+})(jQuery, window.FB, cambio);
