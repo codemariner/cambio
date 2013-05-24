@@ -219,7 +219,11 @@
         // add the sharing stuff only when we actually enter fullscreen
         // mode the first time
         $fullScreenKnot.on('enteredFullscreen', function () {
-            $fullScreenKnot.scrollParent().animate({scrollTop: $fullScreenKnot.position().top}, 'slow');
+           if(typeof(cambio)!='undefined' && cambio.wallpaperAd==1){
+                $('html body').animate({scrollTop: $fullScreenKnot.position().top}, 'slow');  
+            }else{
+                $fullScreenKnot.scrollParent().animate({scrollTop: $fullScreenKnot.position().top}, 'slow');
+            }
             $fullScreenKnot.data('knot')._track();
         });
 
