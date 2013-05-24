@@ -34,8 +34,10 @@ module.exports = function (grunt) {
         concat: {
             dist: {
                 src: [ 
+                    'vendor/nivo/jquery.nivo.slider.js',
                     'src/cambio.main.js',
                     'src/cambio.mm.js',
+                    'src/cambio.monitor.js',
                     'src/cambio.knot.js'
                 ],
                 dest: 'dist/<%= pkg.name %>.js'
@@ -52,7 +54,7 @@ module.exports = function (grunt) {
             }
         },
         watch: {
-            files: ['src/*.js'],
+            files: ['src/*.js', 'vendor/nivo/jquery.nivo.slider.js'],
             tasks: ['jshint', 'concat', 'uglify', 'connect:server']
         },
         jshint: {

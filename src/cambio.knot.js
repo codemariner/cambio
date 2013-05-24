@@ -21,22 +21,26 @@
                     path: 'li.photo'
                 },
                 'photo_src': {
-                    path: 'a[data-photo-src]'
+                    path: 'a.photo-src[data-photo-src]'
                 },
                 caption: {
-                    path: 'a[html]'
+                    path: '.photo-text[html]'
+                },
+                'tweet_link': {
+                    path: 'a.photo-src[data-tweet-link]'
                 },
                 type: {
                     path: '[data-type]'
                 }
             },
+            noDims: true,
             refreshDivId: $('#ajaxAdDevil').length ? 'ajaxAdDevil' : 'adsDiv1',
             refreshCount: 1,
             after: '<div class="aol-knot-counter"></div>',
             onUiBuilt: function (context) {
-                setCounter(context);
+                setCounter(context.context);
                 $embeddedKnot.on('slideChange', function (evt) {
-                    setCounter(context);            
+                    setCounter(context.context);            
                 });
             }
         };
@@ -160,10 +164,13 @@
                     path: 'li.photo'
                 },
                 'photo_src': {
-                    path: 'a[data-photo-src]'
+                    path: 'a.photo-src[data-photo-src]'
                 },
                 caption: {
-                    path: 'a[html]'
+                    path: '.photo-text[html]'
+                },
+                'tweet_link': {
+                    path: 'a.photo-src[data-tweet-link]'
                 },
                 type: {
                     path: '[data-type]'
@@ -175,6 +182,7 @@
                     '</div>'
                 ].join('')
             },
+            noDims: true,
             fullscreenAdMN: options.rrMN,
             fullscreenAdHeight: "RR",
             fullscreenAdWidth: "RR",
@@ -189,7 +197,6 @@
         if (options && options.knot) {
             settings = $.extend(settings, options.knot);
         }
-
 
         // initialize knot
         var _settings = {"data": dataUrl};
@@ -212,17 +219,6 @@
         // add the sharing stuff only when we actually enter fullscreen
         // mode the first time
         $fullScreenKnot.on('enteredFullscreen', function () {
-            if (!$fullScreenKnot.data('shared')) {
-                $('.aol-knot-fullscreen-right-share').html(shareHtml());
-                if (FB) {
-                    FB.XFBML.parse(); 
-                }
-                if (window.twttr) {
-                    window.twttr.widgets.load();
-                    //$.getScript("http://platform.twitter.com/widgets.js");
-                }
-                $fullScreenKnot.data('shared', true);
-            }
             $fullScreenKnot.scrollParent().animate({scrollTop: $fullScreenKnot.position().top}, 'slow');
             $fullScreenKnot.data('knot')._track();
         });
