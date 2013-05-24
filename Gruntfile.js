@@ -84,7 +84,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'watch', 'yuidoc']);
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'connect:server', 'watch', 'yuidoc']);
 
     grunt.loadNpmTasks('grunt-contrib-compass');
     grunt.loadNpmTasks('grunt-contrib-uglify');
