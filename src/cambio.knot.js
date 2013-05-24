@@ -208,8 +208,8 @@
             evt.preventDefault();
             var $this = $(this);
             var $knot = $fullScreenKnot.data('knot');
-            var activeSlide = $this.data('active-slide') ? Number($this.data('active-slide')) : -1;
-            if ($knot.isFullscreen && activeSlide !== -1) {
+            var activeSlide = $this.data('active-slide') ? Number($this.data('active-slide')) : 0;
+            if ($knot.isFullscreen) {
                 $fullScreenKnot.knotFullscreen('showSlide', activeSlide);
             } else {
                 $knot.activeSlide = activeSlide;
