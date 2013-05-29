@@ -73,6 +73,7 @@ module.exports = function (grunt) {
                 browser: true,
                 white: true,
                 jquery: true,
+                evil: true,
                 globals: {
                     console: true,
                     JSON: true,

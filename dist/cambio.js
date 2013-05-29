@@ -128,6 +128,7 @@ var cambioLightbox = {
     omniMain : function () {
     }, //this will be populated with omniture code that sets all properties for particular main page (home,category page omni call)
     pushCounter : 0,
+    pictelaCounter : 0,
     //Opens lightbox
     openLightbox : function () {
         $('#lbBackground').fadeIn('fast', function () {
@@ -295,6 +296,8 @@ var cambioLightbox = {
             success : function (data) {
                 //Set flag telling that data is loaded
                 that.loadedData = 1;
+                that.pushCounter = 0;
+                that.pictelaCounter = 0;
                 var i = 0;
 
                 //Need to replace scripts and add it when content is ready othervise videoplayer doesn't work
@@ -382,6 +385,8 @@ var cambioLightbox = {
                 that.makeUpLightbox();
                 //Check for push down ad
                 that.checkAndMovePushDown();
+                //Fix for pixela ad
+                that.checkAndMovePictelaAd();
             },
             error : function (e, text, error) {
                 console.log('Lightbox content load error: ' + e + ',' + text + ',' + error);
@@ -660,6 +665,33 @@ var cambioLightbox = {
         //console.log('set margin');
     },
 
+    checkAndMovePictelaAd : function () {
+        if ($('.articleCnt').length) {
+            if (this.pictelaCounter === 10) {
+                return false;
+            } else {
+                var that = this;
+                $('.lbRightCnt .side-ad div').each(function () {
+                    if ($(this).attr('id') && $(this).attr('id').indexOf('ptelawatcher') === 0) {
+                        var id = $(this).attr('id').replace('ptelawatcher', '');
+                        if ($('#ptelaswfholder' + id).length > 0) {
+                            $('.lbRightCnt .side-ad div:first').prepend($('#ptelaswfholder' + id));
+                            $('#ptelaswfholder' + id).attr('style', 'position:relative');
+                            $('#ptelawatcher' + id).css('display', 'none');
+                            $(this).css('height', '0px');
+                            $('.lbRightCnt .side-ad iframe').css('height', '0px');
+                            return false;
+                        }
+                    }
+                });
+                that.pictelaCounter++;
+                window.setTimeout(function () {
+                    that.checkAndMovePictelaAd();
+                }, 300);
+            }
+        }
+    },
+
     checkAndMovePushDown : function () {
         console.log('Checking push down ad');
         if ($('.articleCnt').length) {
@@ -689,6 +721,7 @@ var cambioLightbox = {
             that.closeLightbox();
         });
         this.checkAndMovePushDown();
+        this.checkAndMovePictelaAd();
         //On box click events
 
         $('body').on('click', '.boxLink', function (event) {
