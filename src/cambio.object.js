@@ -247,6 +247,7 @@ var cambioLightbox = {
                     $('#lbCnt').css('overflow', 'auto');
                     that.animationEnd = 1;
                     that.replace5minScripts();
+                    that.fixTwitterWidget();
                 });
             });
 
@@ -266,6 +267,7 @@ var cambioLightbox = {
                     $('#lbCnt').css('overflow', 'auto');
                     that.animationEnd = 1;
                     that.replace5minScripts();
+                    that.fixTwitterWidget();
                 });
             });
             break;
@@ -281,6 +283,7 @@ var cambioLightbox = {
                     }
                     that.animationEnd = 1;
                     that.replace5minScripts();
+                    that.fixTwitterWidget();
                 });
 
             });
@@ -368,6 +371,7 @@ var cambioLightbox = {
                 if (typeof (twttr) !== 'undefined') {
                     twttr.widgets.load();
                 }
+                that.fixTwitterWidget();
 
                 //****************************************************
                 //AFTER ARTICLE GETS LOADED FOR SCOTT'S CODE
@@ -395,6 +399,16 @@ var cambioLightbox = {
                 that.closeLightbox();
             }
         });
+    },
+
+    //fixes tweet widget embeded in post body
+    fixTwitterWidget : function () {
+        if ($('blockquote.twitter-tweet').length) {
+            $('blockquote.twitter-tweet').removeAttr('data-twttr-rendered'); 
+            if (typeof(twttr) !== 'undefined') {
+                twttr.widgets.load();
+            }
+        }
     },
 
     //fixes size of images in slideshow
