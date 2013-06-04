@@ -63,18 +63,12 @@ var cambio = {
     menuInit : function () {
         //TV on hover
         $('#tvNavItem').hover(function () {
-            if (cambio.wallpaperAd === 1 && $(window).scrollTop() < 140) {
-                $(window).scrollTop(140);
-            }
             $('#subNavTv').fadeIn(100);
         }, function () {
             $('#subNavTv').fadeOut(100);
         });
         //Spotlight on hover
         $('#spotlightNavItem').hover(function () {
-            if (cambio.wallpaperAd === 1 && $(window).scrollTop() < 140) {
-                $(window).scrollTop(140);
-            }
             $('#subNavSpotlight').fadeIn(100);
         }, function () {
             $('#subNavSpotlight').fadeOut(100);
