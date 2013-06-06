@@ -9,6 +9,8 @@ if (!window.console) {
         },
         time : function () {
         },
+        info : function () {  
+        },
         timeEnd : function () {
         }
     };
