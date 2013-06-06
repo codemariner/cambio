@@ -220,6 +220,16 @@
         // add the sharing stuff only when we actually enter fullscreen
         // mode the first time
         $fullScreenKnot.on('enteredFullscreen', function () {
+            if (!$fullScreenKnot.data('shared')) {
+                $('.aol-knot-fullscreen-right-share').html(shareHtml());
+                if (FB) {
+                    FB.XFBML.parse(); 
+                }
+                if (window.twttr) {
+                    window.twttr.widgets.load();
+                }
+                $fullScreenKnot.data('shared', true);
+            }
             if (typeof(cambio) !== 'undefined' && cambio.wallpaperAd === 1) {
                 $('html body').animate({scrollTop: $fullScreenKnot.position().top}, 'slow');  
             } else {

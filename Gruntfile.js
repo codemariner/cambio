@@ -34,6 +34,7 @@ module.exports = function (grunt) {
         concat: {
             dist: {
                 src: [ 
+                    'src/cambio.object.js',
                     'vendor/nivo/jquery.nivo.slider.js',
                     'src/cambio.main.js',
                     'src/cambio.mm.js',
@@ -71,12 +72,21 @@ module.exports = function (grunt) {
                 eqnull: true,
                 browser: true,
                 white: true,
+                jquery: true,
+                evil: true,
                 globals: {
                     console: true,
                     JSON: true,
                     jQuery: true,
                     escape: true,
-                    unescape: true
+                    unescape: true,
+                    twttr: true,
+                    s_265: true,
+                    runOmni: true,
+                    bN: true,
+                    bN_cfg: true,
+                    FB: true,
+                    isTouchDevice: true
                 }
             },
             dist: ['src/cambio.*.js'],
