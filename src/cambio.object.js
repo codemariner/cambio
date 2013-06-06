@@ -649,10 +649,12 @@ var cambioLightbox = {
                 });
             } else {
                 //If wallpaper ad is set adjust position of next/prev article
-                if (cambio.wallpaperAd === 1) {
-                    window.setTimeout(function () {
-                        $('.articleNext, .articlePrev').css('top', $('.relatedTags').position().top + 'px');
-                    }, 2000);
+                if (cambio.wallpaperAd === 1) { 
+                    $('.lbTopCnt').append($('.articleNext, .articlePrev'));
+                    $('.lbTopCnt').css('position', 'relative');
+                    $('.articleNext, .articlePrev').css('bottom', '0px').css('top', 'auto').css('left', 'auto').css('right', 'auto');
+                    $('.articleNext').css('left', '0px');
+                    $('.articlePrev').css('right', '0px'); 
                 }
                 $('.body:first').css('overflow', 'hidden');
                 //Set exit button to go to home page or category
@@ -993,6 +995,19 @@ var cambioGrid = {
     }
 };
 
+var Wallpaper = {
+    adCheck: function () {
+        $("#VwP103199Div2 > div").each(function () {        
+            var $this = $(this);
+            var top = parseInt($this.css('top'), 10);        
+            var width = $this.width();
+            $this.css('top', top + 1);
+            $this.css('width', width + 1); 
+        });
+    }
+};
+
+
 //Before displaying page
 $(function () {
     cambio.init();
@@ -1000,4 +1015,7 @@ $(function () {
         cambioGrid.firstLoadInit(window.ad300x250);
     }
     cambioLightbox.init();
+    if (window.wallpaperAd === 1) {
+        setTimeout(Wallpaper.adCheck, 2000);
+    }
 });
