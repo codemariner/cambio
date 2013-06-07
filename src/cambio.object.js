@@ -50,6 +50,7 @@ function pause5min(elem) {
 var cambio = {
     wallpaperAd : window.wallpaperAd,
     overlayLoad : 0,
+    tagAdCounter : 0,
     scrollCheck : function () {
         var w = $(window).width();
         if (w > 980) {
@@ -110,7 +111,31 @@ var cambio = {
         if (this.wallpaperAd === 1) {
             this.overlayLoad = 0;
         }
+        this.fixTagPageAd();
+    },
+    
+    //Fixes size of rr ad for trag pages (photo and celebs) 
+    fixTagPageAd : function () {
+        if ($('.tag.ad').length) {
+            if (this.tagAdCounter < 10) {
+                var ad = $('.tag.ad').first();
+                var marginTop = parseInt($('.tag:first').css('marginTop'), 10);
+                var singleH = $('.tag:first').height() + marginTop;
+                var adH = $(ad).height() + marginTop;
+                var num = Math.ceil(adH / singleH);
+                if (num > 1) {
+                    $(ad).height(num * singleH - marginTop);
+                }
+                this.tagAdCounter++;
+                var that = this;
+                window.setTimeout(function () {
+                    that.fixTagPageAd();
+                }, 500);
+
+            }
+        }
     }
+
 };
 
 var cambioLightbox = {
@@ -642,6 +667,10 @@ var cambioLightbox = {
                             $('#lbClose').click(function () {
                                 that.closeLightbox();
                             });
+                            //Fix side ad
+                            if (typeof (cambio) !== 'undefined') {
+                                cambio.fixTagPageAd();
+                            }
                         });
 
                     },
