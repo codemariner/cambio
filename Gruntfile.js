@@ -39,6 +39,7 @@ module.exports = function (grunt) {
                     'src/cambio.main.js',
                     'src/cambio.mm.js',
                     'src/cambio.monitor.js',
+                    'src/cambio.comments.js',
                     'src/cambio.knot.js'
                 ],
                 dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
@@ -75,10 +76,12 @@ module.exports = function (grunt) {
                 jquery: true,
                 evil: true,
                 globals: {
+                    cambio: true,
                     console: true,
                     JSON: true,
                     jQuery: true,
                     escape: true,
+                    fyre: true,
                     unescape: true,
                     twttr: true,
                     s_265: true,
@@ -86,7 +89,8 @@ module.exports = function (grunt) {
                     bN: true,
                     bN_cfg: true,
                     FB: true,
-                    isTouchDevice: true
+                    isTouchDevice: true,
+                    cambioLightbox: true
                 }
             },
             dist: ['src/cambio.*.js'],
