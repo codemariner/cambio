@@ -1,39 +1,82 @@
-(function ($, cambio) {
+(function ($, cambio, cambioLightbox) {
     "use strict";
 
     cambio.postComments = {
-        init: function (config) {
-            var defaultOpts = {
-                el: 'post-comments',
-                signed: false
-            };
-            $.extend(defaultOpts, config);
-            this.opts = defaultOpts;
+        init: function () {
+            var $lightbox = $(cambioLightbox);
+
+            var _this = this;
+
+            $lightbox.on('cambio.lightbox.beforeClose', function () {
+                // article is being closed so make sure we save the
+                // livefyre comments widget and have it stop pulling the stream
+                _this.$commentsEl = $('#post-comments .fyre');
+                if (_this.widget) {
+                    _this.widget.stop();
+                }
+            });
+
+            $lightbox.on('cambio.lightbox.afterOpen', function () {
+                // an 'open' has occurred but we don't know if an article
+                // is already open or not. This open event is a trigger for
+                // any article load.  If we find the livefyre
+                // element, then it has already been loaded, so go ahead
+                // and store a reference to it so we can add it to the incoming article
+                var $el = $('#post-comments .fyre');
+                if ($el.length) {
+                    _this.$commentsEl = $el;
+                }
+                // just in case the comment stream was stopped, ask it to resume
+                if (_this.widget) {
+                    _this.widget.resume();
+                }
+            });
+            $lightbox.on('cambio.lightbox.articleLoaded', function () {
+                if (_this.$commentsEl) {
+                    $('#post-comments').appendTo(this.$commentsEl);
+                }
+                _this.load();
+            });
         },
-        fyreOnLoad: function (widget) {
-            cambio.debug('');
+        _fyreOnLoad: function (widget) {
             cambio.postComments.widget = widget;
         },
-        changeCollection: null,
-        load: function (articleId, opts) {
+        $commentsEl: null,
+        load: function () {
             if ($('#post-comments').length === 0) {
                 return;
             }
-            var defaultOpts = {collectionMeta: { articleId: articleId, url: fyre.conv.load.makeCollectionUrl()}};
-            $.extend(defaultOpts, this.opts);
-            var _opts = $.extend(defaultOpts, opts);
-            window._opts = _opts;
             if (fyre && fyre.conv) {
-                if (this.widget) {
-                    this.widget.changeCollection(_opts);
+                var config = cambio.postComments.getConfig();
+                if (cambio.postComments.widget) {
+                    cambio.postComments.widget.changeCollection(config['config']);
                 } else {
-                    fyre.conv.load({}, [_opts], this.fyreOnLoad);
+                    fyre.conv.load({}, [config['config']], cambio.postComments._fyreOnLoad);
                 }
             }
+        },
+        getConfig: function () {
+            var $el = $('#post-comments');
+            var siteId = $el.data('site-id');
+            var network = $el.data('network');
+            var title = $el.data('title');
+            var tags = $el.data('tags');
+            var articleId = $el.data('article-id');
+            var url = $el.data('post-url');
+            return {global: {network: network},
+                    config: {el: 'post-comments',
+                         siteId: siteId,
+                         network: network,
+                         title: title,
+                         tags: tags,
+                         articleId: articleId,
+                         collectionMeta: {articleId: articleId, url: url },
+                         signed: false}
+            };
         }
     };
 
-}) (jQuery, cambio);
+}) (jQuery, cambio, cambioLightbox);
 
 
 
