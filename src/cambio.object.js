@@ -138,6 +138,12 @@ var cambio = {
 
 };
 
+/**
+ * events:
+ *   cambio.lightbox.afterArticleLoad
+ *   cambio.lightbox.afterOpen
+ *   cambio.lightbox.beforeClose
+ */
 var cambioLightbox = {
     blogUrl : 'http://' + document.domain,
     baseTitle : 'Cambio',
@@ -156,7 +162,7 @@ var cambioLightbox = {
             $('#lbCnt').fadeIn('fast');
         });
         $('body').css('overflow', 'hidden');
-
+        $(this).trigger('cambio.lightbox.afterOpen');
     },
 
     //Sends omniture request to count page view
@@ -184,6 +190,7 @@ var cambioLightbox = {
 
     //Closes lightbox
     closeLightbox : function () {
+        $(this).trigger('cambio.lightbox.beforeClose');
         $('#lbCnt').fadeOut('fast', function () {
             $('#lbContent').html('');
             $('#lbBackground').fadeOut('fast');
@@ -403,6 +410,7 @@ var cambioLightbox = {
                     }
                 }
                 //****************************************************
+                $(that).trigger('cambio.lightbox.articleLoaded');
 
                 //Set next/prev links
                 that.setNextPrevLink();
