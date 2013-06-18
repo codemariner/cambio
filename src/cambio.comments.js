@@ -51,7 +51,7 @@
                 if (cambio.postComments.widget) {
                     cambio.postComments.widget.changeCollection(config['config']);
                 } else {
-                    fyre.conv.load({}, [config['config']], cambio.postComments._fyreOnLoad);
+                    fyre.conv.load(config['global'], [config['config']], cambio.postComments._fyreOnLoad);
                 }
             }
         },
@@ -63,6 +63,8 @@
             var tags = $el.data('tags');
             var articleId = $el.data('article-id');
             var url = $el.data('post-url');
+            var collectionMeta = $el.data('collectionmeta');
+            var checksum = $el.data('checksum');
             return {global: {network: network},
                     config: {el: 'post-comments',
                          siteId: siteId,
@@ -70,8 +72,9 @@
                          title: title,
                          tags: tags,
                          articleId: articleId,
-                         collectionMeta: {articleId: articleId, url: url },
-                         signed: false}
+                         checksum: checksum,
+                         collectionMeta: collectionMeta,
+                         signed: true}
             };
         }
     };
