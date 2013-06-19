@@ -264,9 +264,14 @@
         $fullScreenKnot.on('exitedFullscreen', function () {
             var top = settings.lastScrollTop;
             settings.lastScrollTop = 0;
-            setTimeout(function () {
-                getScrollParent().animate({scrollTop: top}, 'slow');
-            }, 500);
+            // only do the scroll-back if the user was actually low enough
+            // on the screen, no need to do this if they are already near
+            // the top
+            if (top > 340) {
+                setTimeout(function () {
+                    getScrollParent().animate({scrollTop: top}, 'slow');
+                }, 500);
+            }
         });
 
         function getScrollParent() {
