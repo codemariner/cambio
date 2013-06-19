@@ -210,7 +210,10 @@
             var $knot = $fullScreenKnot.data('knot');
             var activeSlide = $this.data('active-slide') ? Number($this.data('active-slide')) : 0;
             if ($knot.isFullscreen) {
-                $fullScreenKnot.knotFullscreen('showSlide', activeSlide);
+                $fullScreenKnot.knotFullscreen('showSlide', activeSlide + 1, 'left', function () {
+                    // this will trigger the ad refresh
+                    $fullScreenKnot.trigger('slideChange', [activeSlide + 1, 'left']);
+                });
             } else {
                 $knot.activeSlide = activeSlide;
                 $fullScreenKnot.knotFullscreen('enterFullscreen');
