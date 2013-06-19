@@ -2,6 +2,14 @@
 (function ($, FB) {
     "use strict";
 
+    // a place to store galleries that are being used on the same page
+    cambio.fullscreenGalleries = [];
+
+    $(cambioLightbox).on('cambio.lightbox.afterOpen', function () {
+        // new article is being loaded, go ahead and reset these
+        cambio.fullscreenGalleries = [];
+    });
+
     $.fn.cambioEmbeddedGallery = function (options) {
         var $embeddedKnot = $(this);
 
@@ -199,6 +207,10 @@
             settings = $.extend(settings, options.knot);
         }
 
+        $fullScreenKnot.on('knotFullscreenUiBuilt', function () {
+            cambio.fullscreenGalleries.push($fullScreenKnot);
+        });
+
         // initialize knot
         var _settings = {"data": dataUrl};
         $.extend(_settings, settings);
@@ -223,6 +235,13 @@
         // add the sharing stuff only when we actually enter fullscreen
         // mode the first time
         $fullScreenKnot.on('enteredFullscreen', function () {
+            $.each(cambio.fullscreenGalleries, function (index, value) {
+                if (value[0] !== $fullScreenKnot[0]) {
+                    if (value.data('knot').isFullscreen) {
+                        value.knotFullscreen('exitFullscreen');
+                    }
+                }
+            });
             if (!$fullScreenKnot.data('shared')) {
                 $('.aol-knot-fullscreen-right-share').html(shareHtml());
                 if (FB) {
