@@ -252,14 +252,34 @@
                 }
                 $fullScreenKnot.data('shared', true);
             }
-            if (typeof(cambio) !== 'undefined' && cambio.wallpaperAd === 1) {
-                $('html body').animate({scrollTop: $fullScreenKnot.position().top}, 'slow');  
-            } else {
-                $fullScreenKnot.scrollParent().animate({scrollTop: $fullScreenKnot.position().top}, 'slow');
-            }
+            
+            var $scrollParent = getScrollParent();
+            var top = $scrollParent[0].scrollTop;
+            settings.lastScrollTop = $scrollParent[0].scrollTop;
+            $scrollParent.animate({scrollTop: $fullScreenKnot.position().top}, 'slow');  
+
             $fullScreenKnot.data('knot')._track();
         });
 
+        $fullScreenKnot.on('exitedFullscreen', function () {
+            var top = settings.lastScrollTop;
+            settings.lastScrollTop = 0;
+            setTimeout(function () {
+                getScrollParent().animate({scrollTop: top}, 'slow');
+            }, 500);
+        });
+
+        function getScrollParent() {
+            if (settings.scrollParent) {
+                return settings.scrollParent;
+            }
+            if (typeof(cambio) !== 'undefined' && cambio.wallpaperAd === 1) {
+                settings.scrollParent = $('html body');
+            } else {
+                settings.scrollParent = $fullScreenKnot.scrollParent();
+            }
+            return settings.scrollParent;
+        }
         return $fullScreenKnot;
     };
 
