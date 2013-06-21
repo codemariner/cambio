@@ -51,16 +51,6 @@ var cambio = {
     wallpaperAd : window.wallpaperAd,
     overlayLoad : 0,
     tagAdCounter : 0,
-    scrollCheck : function () {
-        var w = $(window).width();
-        if (w > 980) {
-            $('body').addClass('wallpaperAd');
-            $('html').addClass('wallpaperAd');
-        } else {
-            $('body').removeClass('wallpaperAd');
-            $('html').removeClass('wallpaperAd');
-        }
-    },
 
     //Inits menu
     menuInit : function () {
@@ -93,15 +83,7 @@ var cambio = {
 
     init : function () {
         this.menuInit();
-        if (this.wallpaperAd === 1) {
-            this.scrollCheck();
-            var that = this;
-            $(window).resize(function () {
-                that.scrollCheck();
-            });
-        }
         //Set global variables for overlay load
-
         //var cambioOverlayLoad=0;
         //Check if we can replace url in browser bar
         if (typeof (window.history.pushState) === 'function') {
@@ -172,14 +154,14 @@ var cambioLightbox = {
 
     //Sets/adjust style of lightbox (make sure it's not covered by fixed menus)
     makeUpLightbox : function () {
-        var topMarg = $('.header').height() + 'px';
-
-        $('#lbBody').css('marginTop', topMarg);
-
-        //Set min height for lightbox background (when there is no content in body - for permalink direct visit)
-        $('#lbBackground').css('minHeight', $(window).height() + 'px');
-        //Set margin for main content
-        this.setMainMargin();
+        if (cambio.wallpaperAd === 0) {
+            var topMarg = $('.header').height() + 'px';
+            $('#lbBody').css('marginTop', topMarg);
+            //Set min height for lightbox background (when there is no content in body - for permalink direct visit)
+            $('#lbBackground').css('minHeight', $(window).height() + 'px');
+            //Set margin for main content
+            this.setMainMargin();
+        }
     },
 
     //Closes lightbox
@@ -694,16 +676,15 @@ var cambioLightbox = {
                     window.location.href = '/' + catReal + '/';
                 });
             }
-        } else {
-            console.log('Dont load category in background');
         }
     },
 
     //Sets margin for grid element (some content might be covered by header and footer)
     setMainMargin : function () {
-        $('#main').css('marginTop', $('.header').height() + 3);
-        $('#main').css('marginBottom', $('.footer').height());
-        //console.log('set margin');
+        if (cambio.wallpaperAd === 0) {
+            $('#main').css('marginTop', $('.header').height() + 3);
+            $('#main').css('marginBottom', $('.footer').height());
+        }
     },
 
     checkAndMovePictelaAd : function () {
@@ -735,7 +716,8 @@ var cambioLightbox = {
 
     checkAndMovePushDown : function () {
         console.log('Checking push down ad');
-        if ($('.articleCnt').length) {
+        
+        if (cambio.wallpaperAd === 0 && $('.articleCnt').length) {
             if (this.pushCounter === 10) {
                 return false;
             }
