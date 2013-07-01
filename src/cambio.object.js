@@ -47,6 +47,11 @@ function pause5min(elem) {
     $('#' + elem.flashObjectId).parents('.boxContent').children().find('.text, .textBackground').slideDown();
 }
 
+var gridVideoPlayer = null;
+function set5min(elem) {
+    gridVideoPlayer = elem.player;
+}
+
 var cambio = {
     wallpaperAd : window.wallpaperAd,
     overlayLoad : 0,
@@ -478,8 +483,6 @@ var cambioLightbox = {
                 }
                 //Set class for particular content
                 $('#lbContent').attr('class', that.type);
-                $('#lbBody').attr('class', that.type);
-                
 
                 //Prop 12 to requested url
                 if (window.s_265) {
@@ -619,6 +622,10 @@ var cambioLightbox = {
 
     //Resets box links (resets default permalink and fires js function that pulls data and displays in lightbox)
     resetBoxLink : function (elem) {
+        //Stop playing video
+        if (gridVideoPlayer !== null) {
+            gridVideoPlayer.pause();
+        }
         //Check if it is article prev/next link
         this.elem = elem;
         //Check link type (if next or previous slide animation will be applied)
