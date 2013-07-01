@@ -116,6 +116,120 @@ var cambio = {
 
             }
         }
+    },
+    
+    //Shre bar render code
+    renderShareBar : function () {
+        console.log('Render share buttons');
+        //fires share bars code
+        var that = this;
+        //Facebook
+        if (typeof(FB) !== 'undefined') {
+            console.log('Parsing facebook');
+            FB.XFBML.parse($('#lbBody')[0]);
+
+        } else {
+            $.getScript("http://connect.facebook.net/en_US/all.js#xfbml=1", function () {
+                console.log('Parsing facebook after load js');
+                FB.XFBML.parse($('#lbBody')[0]);
+
+            });
+        }
+        //Twitter
+        if (typeof(twttr) !== 'undefined') {
+            twttr.widgets.load();
+            console.log('Parsing twitter');
+        } else {
+            $.getScript('http://platform.twitter.com/widgets.js');
+            console.log('Parsing twitter after load js');
+        }
+        //Google
+        var gObj = {
+            "annotation" : "bubble",
+            "size" : "tall",
+            "href" : that.blogUrl + that.currentUrl
+        };
+        if (typeof(gapi) !== 'undefined') {
+            console.log('Parsing google');
+            $('#lbBody .gPlusShare').each(function () {
+                console.log('google 2');
+                gapi.plusone.render($(this).get(0), gObj);
+            });
+        } else {
+            window.___gcfg = {
+                lang : 'en-US',
+                parsetags : 'explicit'
+            };
+            $.getScript('https://apis.google.com/js/plusone.js', function () {
+                console.log('Parsing google after load js');
+                console.log(gObj);
+                $('#lbBody .gPlusShare').each(function () {
+                    console.log('google 1');
+                    gapi.plusone.render($(this).get(0), gObj);
+                });
+            });
+
+        }
+        //Stumble
+        if (typeof(STMBLPN) !== 'undefined') {
+            console.log('Parsing stumble');
+            STMBLPN.processWidgets();
+        } else {
+            $.getScript(('https:' === document.location.protocol ? 'https:' : 'http:') + '//platform.stumbleupon.com/1/widgets.js');
+            console.log('Parsing stumble after load js');
+        }
+        //Pintrest TODO   
+        $.getScript(('https:' === document.location.protocol ? 'https:' : 'http:') + '//assets.pinterest.com/js/pinit.js');
+        //Redit
+        
+        
+        var redditUrl = '';
+        if (document.location.protocol === 'https:') {
+            redditUrl = 'https://redditstatic.s3.amazonaws.com';
+        } else {
+            redditUrl = 'http://www.reddit.com/static';
+        }
+        var originalWriteFunction = document.write;
+        document.write = function (str) {
+            $('.redditButton').html(str);
+        };
+        $.getScript(('https:' === document.location.protocol ? 'https:' : 'http:') + '//www.reddit.com/static/button/button2.js', function () {
+            document.write = originalWriteFunction;
+        });
+        
+        //var redditCode = '<iframe src="' + redditUrl + '/button/button2.html?title=' + window.reddit_title + '&url=' + window.reddit_url + '&newwindow=1" height="69" width="51" scrolling="no"" frameborder="0"></iframe>';
+        //$('.redditButton').html(redditCode);
+        
+        
+        
+        
+        
+        
+       /* //Parse facebook
+        if (typeof (FB) !== 'undefined') {
+            FB.XFBML.parse($('#lbBody')[0]);
+        }
+        //Parse twitter
+        if (typeof (twttr) !== 'undefined') {
+            twttr.widgets.load();
+        } else {
+            $.getScript('http://platform.twitter.com/widgets.js', function () {
+                twttr.widgets.load();
+            });
+        }
+        //Google + button
+        if (typeof (gapi) !== 'undefined') {    
+            gapi.plusone.render($('.gPlusShare').get(0));
+        } else {
+            $.getScript('https://apis.google.com/js/plusone.js');
+        }
+        //Stumble
+        if (typeof (STMBLPN) !== 'undefined') {
+            
+        } else {
+            $.getScript('http://platform.stumbleupon.com/1/widgets.js');
+        }
+        */
     }
 
 };
@@ -364,6 +478,8 @@ var cambioLightbox = {
                 }
                 //Set class for particular content
                 $('#lbContent').attr('class', that.type);
+                $('#lbBody').attr('class', that.type);
+                
 
                 //Prop 12 to requested url
                 if (window.s_265) {
@@ -372,15 +488,14 @@ var cambioLightbox = {
                 }
                 //Run omniture request
                 that.sendOmnitureRequest();
-
-                //Parse facebook
-                if (typeof (FB) !== 'undefined') {
-                    FB.XFBML.parse($('#lbBody')[0]);
+                
+                
+                //Run share bar parse
+                console.log('Before share render');
+                if (typeof(cambio) !== 'undefined') {
+                    cambio.renderShareBar();
                 }
-                //Parse twitter
-                if (typeof (twttr) !== 'undefined') {
-                    twttr.widgets.load();
-                }
+                
                 that.fixTwitterWidget();
 
                 //****************************************************
@@ -594,6 +709,9 @@ var cambioLightbox = {
                 catReal = cat;
             }
             var catName = $('.hiddenCatCnt:last .catName').html();
+            //Render share bar
+            console.log('Render share bar');
+            cambio.renderShareBar();
             //Only if overlay load (AJAX load is set)
             if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1) {
                 console.log('Run script that will load category ( ' + cat + ' )page in background');
@@ -1018,12 +1136,12 @@ var cambioGrid = {
 
 var Wallpaper = {
     adCheck: function () {
-        $("#VwP103199Div2 > div").each(function () {        
+        $("#VwP103199Div2 > div").each(function () {
             var $this = $(this);
-            var top = parseInt($this.css('top'), 10);        
+            var top = parseInt($this.css('top'), 10);
             var width = $this.width();
             $this.css('top', top + 1);
-            $this.css('width', width + 1); 
+            $this.css('width', width + 1);
         });
     }
 };

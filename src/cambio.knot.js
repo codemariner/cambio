@@ -10,6 +10,65 @@
         cambio.fullscreenGalleries = [];
     });
 
+
+    //***********************************************
+    //Code from js-bottom-knot-js
+    var findLauncher = function () {
+        var regex = /\/photos\/[^\/]+/;
+        var launcher;
+        $('.articleText a').each(function () {
+            var $this = $(this);
+            var href = $(this).attr('href');
+            if (href && href.length) {
+                if (regex.test(href)) {
+                    if (!$this.parent('.post-gallery').length) {
+                        launcher = $this;
+                    }
+                    return false;
+                }
+            }
+        });
+        return launcher;   
+    };
+    
+    var cambioJsBottomKnot = function (options) {
+        var galleryId = '';
+        var opts = '';
+        $('#knot').cambioEmbeddedGallery(options);
+        options.shareTemplateId = 'share-bar-tmpl';
+        var $launcher = findLauncher();
+        if ($launcher) {
+            $('#knot-gallery').cambioFullscreenGallery(options, $launcher);
+        }
+        $launcher = $('#post-gallery a');
+        if ($launcher.length) {
+            galleryId = $launcher.parent('#post-gallery').data('gallery-id');
+            opts = {};
+            $.extend(opts, options);
+            if (galleryId) {
+                opts.galleryId = galleryId;
+                opts.knot.galleryId = galleryId;
+            }
+            $('#knot-preview-gallery').cambioFullscreenGallery(opts, $launcher);
+        }
+        var $fsLauncher = $('.slideshowLauncher');
+        if ($fsLauncher.length) {
+            var dataId = $fsLauncher.first().data('data-id');
+            if (dataId) {
+                galleryId = $fsLauncher.data('gallery-id');
+                opts = {};
+                $.extend(opts, options);
+                if (galleryId) {
+                    opts.galleryId = galleryId;
+                    opts.knot.galleryId = galleryId;
+                }
+                $('#knot-slideshow-overlay').cambioFullscreenGallery(opts, $fsLauncher, '#' + dataId);
+            }
+        }
+    };
+    
+    //***********************************************
+
     $.fn.cambioEmbeddedGallery = function (options) {
         var $embeddedKnot = $(this);
 
@@ -243,13 +302,16 @@
                 }
             });
             if (!$fullScreenKnot.data('shared')) {
-                $('.aol-knot-fullscreen-right-share').html(shareHtml());
-                if (FB) {
+                cambio.renderShareBar();
+                //$('.aol-knot-fullscreen-right-share').html(shareHtml());
+                /*if (FB) {
                     FB.XFBML.parse(); 
                 }
                 if (window.twttr) {
                     window.twttr.widgets.load();
                 }
+               
+                */
                 $fullScreenKnot.data('shared', true);
             }
             

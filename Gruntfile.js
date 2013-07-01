@@ -84,11 +84,13 @@ module.exports = function (grunt) {
                     fyre: true,
                     unescape: true,
                     twttr: true,
+                    gapi: true,
                     s_265: true,
                     runOmni: true,
                     bN: true,
                     bN_cfg: true,
                     FB: true,
+                    STMBLPN: true,
                     isTouchDevice: true,
                     cambioLightbox: true
                 }
