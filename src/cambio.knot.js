@@ -1,3 +1,65 @@
+    //Code from js-bottom-knot-js
+var findLauncher = function () {
+    var regex = /\/photos\/[^\/]+/;
+    var launcher;
+    $('.articleText a').each(function () {
+        var $this = $(this);
+        var href = $(this).attr('href');
+        if (href && href.length) {
+            if (regex.test(href)) {
+                if (!$this.parent('.post-gallery').length) {
+                    launcher = $this;
+                }
+                return false;
+            }
+        }
+    });
+    return launcher;   
+};
+
+var cambioJsBottomKnot = function (options) {
+    console.log('HERE js bottom code');
+    console.log(options);
+    var galleryId = '';
+    var opts = '';
+    $('#knot').cambioEmbeddedGallery(options);
+    options.shareTemplateId = 'share-bar-tmpl';
+    var $launcher = findLauncher();
+    if ($launcher) {
+        $('#knot-gallery').cambioFullscreenGallery(options, $launcher);
+    }
+    $launcher = $('#post-gallery a');
+    if ($launcher.length) {
+        galleryId = $launcher.parent('#post-gallery').data('gallery-id');
+        opts = {};
+        $.extend(opts, options);
+        if (galleryId) {
+            opts.galleryId = galleryId;
+            opts.knot.galleryId = galleryId;
+        }
+        $('#knot-preview-gallery').cambioFullscreenGallery(opts, $launcher);
+    }
+    var $fsLauncher = $('.slideshowLauncher');
+    if ($fsLauncher.length) {
+        var dataId = $fsLauncher.first().data('data-id');
+        if (dataId) {
+            galleryId = $fsLauncher.data('gallery-id');
+            opts = {};
+            $.extend(opts, options);
+            if (galleryId) {
+                opts.galleryId = galleryId;
+                opts.knot.galleryId = galleryId;
+            }
+            $('#knot-slideshow-overlay').cambioFullscreenGallery(opts, $fsLauncher, '#' + dataId);
+        }
+    }
+};
+    
+    //***********************************************
+
+
+
+
 /*global cambio:false*/
 (function ($, FB) {
     "use strict";
@@ -12,62 +74,7 @@
 
 
     //***********************************************
-    //Code from js-bottom-knot-js
-    var findLauncher = function () {
-        var regex = /\/photos\/[^\/]+/;
-        var launcher;
-        $('.articleText a').each(function () {
-            var $this = $(this);
-            var href = $(this).attr('href');
-            if (href && href.length) {
-                if (regex.test(href)) {
-                    if (!$this.parent('.post-gallery').length) {
-                        launcher = $this;
-                    }
-                    return false;
-                }
-            }
-        });
-        return launcher;   
-    };
-    
-    var cambioJsBottomKnot = function (options) {
-        var galleryId = '';
-        var opts = '';
-        $('#knot').cambioEmbeddedGallery(options);
-        options.shareTemplateId = 'share-bar-tmpl';
-        var $launcher = findLauncher();
-        if ($launcher) {
-            $('#knot-gallery').cambioFullscreenGallery(options, $launcher);
-        }
-        $launcher = $('#post-gallery a');
-        if ($launcher.length) {
-            galleryId = $launcher.parent('#post-gallery').data('gallery-id');
-            opts = {};
-            $.extend(opts, options);
-            if (galleryId) {
-                opts.galleryId = galleryId;
-                opts.knot.galleryId = galleryId;
-            }
-            $('#knot-preview-gallery').cambioFullscreenGallery(opts, $launcher);
-        }
-        var $fsLauncher = $('.slideshowLauncher');
-        if ($fsLauncher.length) {
-            var dataId = $fsLauncher.first().data('data-id');
-            if (dataId) {
-                galleryId = $fsLauncher.data('gallery-id');
-                opts = {};
-                $.extend(opts, options);
-                if (galleryId) {
-                    opts.galleryId = galleryId;
-                    opts.knot.galleryId = galleryId;
-                }
-                $('#knot-slideshow-overlay').cambioFullscreenGallery(opts, $fsLauncher, '#' + dataId);
-            }
-        }
-    };
-    
-    //***********************************************
+
 
     $.fn.cambioEmbeddedGallery = function (options) {
         var $embeddedKnot = $(this);
@@ -139,14 +146,7 @@
     
         options = $.extend({galleryId: 1, adRefreshCount: 2}, options);
 
-        var shareHtml = function () {
-            if (options.shareTemplateId) {
-                var text = $('#' + options.shareTemplateId).text();
-                text = text.replace(/sscript/g, 'script');
-                return text;
-            }
-            return '';
-        };
+       
 
         // find the first href that matches a known url pattern
         // and return it
@@ -293,7 +293,7 @@
 
         // add the sharing stuff only when we actually enter fullscreen
         // mode the first time
-        $fullScreenKnot.on('enteredFullscreen', function () {
+        $fullScreenKnot.on('enteredFullscreen', function (event) {
             $.each(cambio.fullscreenGalleries, function (index, value) {
                 if (value[0] !== $fullScreenKnot[0]) {
                     if (value.data('knot').isFullscreen) {
@@ -301,25 +301,12 @@
                     }
                 }
             });
-            if (!$fullScreenKnot.data('shared')) {
-                cambio.renderShareBar();
-                //$('.aol-knot-fullscreen-right-share').html(shareHtml());
-                /*if (FB) {
-                    FB.XFBML.parse(); 
-                }
-                if (window.twttr) {
-                    window.twttr.widgets.load();
-                }
-               
-                */
-                $fullScreenKnot.data('shared', true);
-            }
-            
+            cambio.moveShareBarToGallery(1);
+            cambio.changePintrestButton($('#' + event.target.id).data().knot);
             var $scrollParent = getScrollParent();
             var top = $scrollParent[0].scrollTop;
             settings.lastScrollTop = $scrollParent[0].scrollTop;
             $scrollParent.animate({scrollTop: $fullScreenKnot.position().top}, 'slow');  
-
             $fullScreenKnot.data('knot')._track();
         });
 
@@ -331,21 +318,36 @@
             // the top
             if (top > 340) {
                 setTimeout(function () {
-                    getScrollParent().animate({scrollTop: top}, 'slow');
+                    getScrollParent().animate({scrollTop: top}, 'slow');          
                 }, 500);
             }
+            //Put share bar back to article
+            cambio.moveShareBarToGallery(0);
+        });
+        
+        $fullScreenKnot.on('slideChange', function (event, index, dir) {
+            console.log(event);
+            window.setTimeout(function () { cambio.changePintrestButton($('#' + event.target.id).data().knot); }, 500);
+        });
+        
+        $fullScreenKnot.on('transitionComplete', function (a, index) {
+            window.alert('transition complete' + index);    
+            console.log(index);
         });
 
         function getScrollParent() {
             if (settings.scrollParent) {
+                console.log('From settings' + $(settings.scrollParent).get(0));
                 return settings.scrollParent;
             }
             if (typeof(cambio) !== 'undefined' && cambio.wallpaperAd === 1) {
-                settings.scrollParent = $('html body');
+                settings.scrollParent = $('html, body');
             } else {
                 settings.scrollParent = $fullScreenKnot.scrollParent();
             }
+            console.log($(settings.scrollParent).get(0));
             return settings.scrollParent;
+            
         }
         return $fullScreenKnot;
     };
