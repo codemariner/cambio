@@ -919,11 +919,12 @@ var cambioLightbox = {
                     }
                 }
             }
-            //Render share bar for tag page
-            if ($('#tag-profile-footer-share').length) {
-                cambio.renderShareBar();
-            }
+            
         });
+        //Render share bar for tag page
+        if ($('#tag-profile-footer-share').length) {
+            cambio.renderShareBar();
+        }
 
         touchScroll('#lbCnt');
         //On resize check if lightbox properly displayed
