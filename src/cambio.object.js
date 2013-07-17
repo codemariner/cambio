@@ -891,7 +891,7 @@ var cambioLightbox = {
         $('#lbClose').click(function () {
             that.closeLightbox();
         });
-        this.checkAndMovePushDown();
+        
         this.checkAndMovePictelaAd();
         //On box click events
 
@@ -918,6 +918,10 @@ var cambioLightbox = {
                         $('#lbCnt').css('top', '120px');
                     }
                 }
+            }
+            //Render share bar for tag page
+            if ($('#tag-profile-footer-share').length) {
+                cambio.renderShareBar();
             }
         });
 
