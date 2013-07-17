@@ -864,26 +864,26 @@ var cambioLightbox = {
     },
 
     checkAndMovePushDown : function () {
-        console.log('Checking push down ad');  
         if (cambio.wallpaperAd === 0 && $('.articleCnt').length) {
             if (this.pushCounter === 10) {
                 return false;
             }
             if ($('#eyeDiv').length) {
-                $('#eyeDiv').prependTo('.lbTopCnt div:first');
+                $('#eyeDiv').prependTo($('.lbTopCnt div:first'));
                 return true;
             } else {
-                this.pushCounter++;
                 var that = this;
+                that.pushCounter++;  
                 window.setTimeout(function () {
                     that.checkAndMovePushDown();
-                }, 1000);
+                }, 300);
             }
         }
     },
 
     //Init lightbox and links that should be displyed in lightbox function
     init : function () {
+        
         //Save base url of the page
         this.baseUrl = window.location.href;
         var that = this;
@@ -891,23 +891,12 @@ var cambioLightbox = {
         $('#lbClose').click(function () {
             that.closeLightbox();
         });
-        this.checkAndMovePushDown();
+
         this.checkAndMovePictelaAd();
         //On box click events
-
+        
         $('body').on('click', '.boxLink', function (event) {
-            if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1 || ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic'))) {
-                //Check if url has wallpaper mode
-               /* if (window.wallpaperUrls !== '') {
-                    var i = 0;
-                    for (i = 0; i < window.wallpaperUrls.length; i++) {
-                        console.log('checking against' + window.wallpaperUrls[i]);
-                        if ($(this).attr('href').indexOf(window.wallpaperUrls[i]) > -1) {
-                            console.log('wallpaper ad article');
-                            return true;
-                        }
-                    }
-                } */
+            if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1 || ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic'))) {  
                 event.preventDefault();
                 that.resetBoxLink(this);
                 if ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic')) {
