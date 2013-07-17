@@ -42,7 +42,7 @@ module.exports = function (grunt) {
                     'src/cambio.comments.js',
                     'src/cambio.knot.js'
                 ],
-                dest: 'dist/<%= pkg.name %>.js'
+                dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
             }
         },
         uglify: {
@@ -51,7 +51,7 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    'dist/<%= pkg.name %>.min.js': ['dist/<%= pkg.name %>.js']
+                    'dist/<%= pkg.name %>-<%= pkg.version %>.min.js': ['dist/<%= pkg.name %>-<%= pkg.version %>.js']
                 }
             }
         },
@@ -84,11 +84,13 @@ module.exports = function (grunt) {
                     fyre: true,
                     unescape: true,
                     twttr: true,
+                    gapi: true,
                     s_265: true,
                     runOmni: true,
                     bN: true,
                     bN_cfg: true,
                     FB: true,
+                    STMBLPN: true,
                     isTouchDevice: true,
                     cambioLightbox: true
                 }

@@ -9,6 +9,8 @@ if (!window.console) {
         },
         time : function () {
         },
+        info : function () {  
+        },
         timeEnd : function () {
         }
     };
@@ -45,19 +47,15 @@ function pause5min(elem) {
     $('#' + elem.flashObjectId).parents('.boxContent').children().find('.text, .textBackground').slideDown();
 }
 
+var gridVideoPlayer = null;
+function set5min(elem) {
+    gridVideoPlayer = elem.player;
+}
+
 var cambio = {
     wallpaperAd : window.wallpaperAd,
     overlayLoad : 0,
-    scrollCheck : function () {
-        var w = $(window).width();
-        if (w > 980) {
-            $('body').addClass('wallpaperAd');
-            $('html').addClass('wallpaperAd');
-        } else {
-            $('body').removeClass('wallpaperAd');
-            $('html').removeClass('wallpaperAd');
-        }
-    },
+    tagAdCounter : 0,
 
     //Inits menu
     menuInit : function () {
@@ -90,15 +88,7 @@ var cambio = {
 
     init : function () {
         this.menuInit();
-        if (this.wallpaperAd === 1) {
-            this.scrollCheck();
-            var that = this;
-            $(window).resize(function () {
-                that.scrollCheck();
-            });
-        }
         //Set global variables for overlay load
-
         //var cambioOverlayLoad=0;
         //Check if we can replace url in browser bar
         if (typeof (window.history.pushState) === 'function') {
@@ -108,7 +98,165 @@ var cambio = {
         if (this.wallpaperAd === 1) {
             this.overlayLoad = 0;
         }
+        this.fixTagPageAd();
+    },
+    
+    //Fixes size of rr ad for trag pages (photo and celebs) 
+    fixTagPageAd : function () {
+        if ($('.tag.ad').length) {
+            if (this.tagAdCounter < 10) {
+                var ad = $('.tag.ad').first();
+                var marginTop = parseInt($('.tag:first').css('marginTop'), 10);
+                var singleH = $('.tag:first').height() + marginTop;
+                var adH = $(ad).height() + marginTop;
+                var num = Math.ceil(adH / singleH);
+                if (num > 1) {
+                    $(ad).height(num * singleH - marginTop);
+                }
+                this.tagAdCounter++;
+                var that = this;
+                window.setTimeout(function () {
+                    that.fixTagPageAd();
+                }, 500);
+            }
+        }
+    },
+    
+    //Changes pintrest share button for galleries 
+    changePintrestButton : function (knotObj) {
+        if (knotObj.entries[knotObj.activeSlide].type === 'photo' || knotObj.entries[knotObj.activeSlide].type === 'image') {
+            var url = encodeURIComponent(window.location.href);
+            var desc = $(knotObj.entries[knotObj.activeSlide].caption).text();
+            var image = knotObj.entries[knotObj.activeSlide].photo_src;
+            image = encodeURIComponent(image);
+            desc = encodeURIComponent(desc);
+            $('.socialshare li.galleryPinButton').remove();
+            $('.socialshare li.articlePinButton').remove();
+            $('.socialshare').prepend('<li class="galleryPinButton pinit"><a data-pin-config="above" href="//pinterest.com/pin/create/button/?url=' + url + '&media=' + image + '&description=' + desc + '" data-pin-do="buttonPin"><img src="//assets.pinterest.com/images/pidgets/pin_it_button.png" /></a></li>');      
+            $.getScript(('https:' === document.location.protocol ? 'https:' : 'http:') + '//assets.pinterest.com/js/pinit.js');    
+        }
+    },
+    
+    //moves article share bar to gallery container
+    moveShareBarToGallery : function (where) {
+        if ($('.aol-knot-fullscreen-right-share').length) {
+            if (where === 1) {
+                //Move from article to gallery
+                $('.aol-knot-fullscreen-right-share').html($('.articleShareBarContainer').html());   
+                $('.articleShareBarContainer').empty();
+                $('.redditButton').hide();
+            } else {
+                //Move from gallery to article
+                $('.articleShareBarContainer').html($('.aol-knot-fullscreen-right-share').html());
+                $('.aol-knot-fullscreen-right-share').empty();
+                //Switch pin button back to article image if set
+                $('.socialshare li.galleryPinButton').remove();
+                if (typeof(window.pintrest_image) !== 'undefined') {  
+                    $('.socialshare li.articlePinButton').remove();
+                    $('.socialshare').prepend('<li class="articlePinButton pinit"><a data-pin-config="above" href="//pinterest.com/pin/create/button/?url=' + window.pintrest_url + '&media=' + window.pintrest_image + '&description=' + window.pintrest_title + '" data-pin-do="buttonPin"><img src="//assets.pinterest.com/images/pidgets/pin_it_button.png" /></a></li>');      
+                    $.getScript(('https:' === document.location.protocol ? 'https:' : 'http:') + '//assets.pinterest.com/js/pinit.js');      
+                }
+                $('.redditButton').show();
+            }
+        }
+    },
+    
+    //Shre bar render code
+    renderShareBar : function () {
+        var that = this;
+        //Facebook
+        if (typeof(FB) !== 'undefined') {
+            FB.XFBML.parse($('#lbBody')[0]);
+
+        } else {
+            $.getScript("http://connect.facebook.net/en_US/all.js#xfbml=1", function () {
+                FB.XFBML.parse($('#lbBody')[0]);
+            });
+        }
+        //Twitter
+        if (typeof(twttr) !== 'undefined') {
+            twttr.widgets.load();
+            console.log('Parsing twitter');
+        } else {
+            $.getScript('http://platform.twitter.com/widgets.js');
+            console.log('Parsing twitter after load js');
+        }
+        //Google
+        var gObj = {
+            "annotation" : "bubble",
+            "size" : "tall",
+            "href" : that.blogUrl + that.currentUrl
+        };
+        if (typeof(gapi) !== 'undefined') {
+            console.log('Parsing google');
+            $('.gPlusShare').each(function () {
+                gapi.plusone.render($(this).get(0), gObj);
+            });
+        } else {
+            window.___gcfg = {
+                lang : 'en-US',
+                parsetags : 'explicit'
+            };
+            $.getScript('https://apis.google.com/js/plusone.js', function () {
+                $('.gPlusShare').each(function () {
+                    gapi.plusone.render($(this).get(0), gObj);
+                });
+            });
+
+        }
+        //Stumble
+        if (typeof(STMBLPN) !== 'undefined') {
+            STMBLPN.processWidgets();
+        } else {
+            $.getScript(('https:' === document.location.protocol ? 'https:' : 'http:') + '//platform.stumbleupon.com/1/widgets.js');
+        }
+        //Pintrest TODO   
+        $.getScript(('https:' === document.location.protocol ? 'https:' : 'http:') + '//assets.pinterest.com/js/pinit.js');
+        
+        //Redit
+        var redditUrl = '';
+        if (document.location.protocol === 'https:') {
+            redditUrl = 'https://redditstatic.s3.amazonaws.com';
+        } else {
+            redditUrl = 'http://www.reddit.com/static';
+        }
+        var originalWriteFunction = document.write;
+        document.write = function (str) {
+            $('.redditButton').html(str);
+        };
+        $.getScript(('https:' === document.location.protocol ? 'https:' : 'http:') + '//www.reddit.com/static/button/button2.js', function () {
+            document.write = originalWriteFunction;
+        });
+    },
+    
+    //Fixes related tags (hides one that not fit to one line)
+    fixRelatedTags : function () {
+        if ($('div.relatedTags a').length) {
+            var i = 0;
+            var limit = $('div.relatedTags a').length;
+            var topTag = $('div.relatedTags a:first');
+            if ($(topTag).position().top !== $('div.relatedTags a:last').position().top) {
+                //Add more button
+                $('div.relatedTags a').last().after('<span class="relatedTagMoreButton">more...</span>');
+                for (i = 0; i < limit; i++) {
+                    if ($(topTag).position().top !== $('div.relatedTags .relatedTagMoreButton').position().top) {
+                        $('div.relatedTags a:visible').last().addClass('relatedTagMore').hide();
+                    } else {
+                        break;
+                    }
+                }
+                //Add click event to more button
+                $('.relatedTagMoreButton').click(function () {
+                    if ($('.relatedTagMore').last().css('display') === 'none') {
+                        $('.relatedTagMore').slideDown();
+                        $(this).hide();
+                    }
+                });
+            }
+        }
     }
+    
+
 };
 
 /**
@@ -151,14 +299,14 @@ var cambioLightbox = {
 
     //Sets/adjust style of lightbox (make sure it's not covered by fixed menus)
     makeUpLightbox : function () {
-        var topMarg = $('.header').height() + 'px';
-
-        $('#lbBody').css('marginTop', topMarg);
-
-        //Set min height for lightbox background (when there is no content in body - for permalink direct visit)
-        $('#lbBackground').css('minHeight', $(window).height() + 'px');
-        //Set margin for main content
-        this.setMainMargin();
+        if (cambio.wallpaperAd === 0) {
+            var topMarg = $('.header').height() + 'px';
+            $('#lbBody').css('marginTop', topMarg);
+            //Set min height for lightbox background (when there is no content in body - for permalink direct visit)
+            $('#lbBackground').css('minHeight', $(window).height() + 'px');
+            //Set margin for main content
+            this.setMainMargin();
+        }
     },
 
     //Closes lightbox
@@ -355,6 +503,7 @@ var cambioLightbox = {
                 }
                 //Set class for particular content
                 $('#lbContent').attr('class', that.type);
+                $('#lbBody').attr('class', that.type);
 
                 //Prop 12 to requested url
                 if (window.s_265) {
@@ -363,16 +512,15 @@ var cambioLightbox = {
                 }
                 //Run omniture request
                 that.sendOmnitureRequest();
-
-                //Parse facebook
-                if (typeof (FB) !== 'undefined') {
-                    FB.XFBML.parse($('#lbBody')[0]);
+                //Run share bar parse
+                if (typeof(cambio) !== 'undefined') {
+                    cambio.renderShareBar();
                 }
-                //Parse twitter
-                if (typeof (twttr) !== 'undefined') {
-                    twttr.widgets.load();
-                }
+                
                 that.fixTwitterWidget();
+                
+                //Fix top related tags (add more button)
+                cambio.fixRelatedTags();
 
                 //****************************************************
                 //AFTER ARTICLE GETS LOADED FOR SCOTT'S CODE
@@ -380,6 +528,11 @@ var cambioLightbox = {
                     if ($('#knot').length) {
                         that.slideFix = 0;
                         that.fixSlideshowImageSize();
+                        //change pintrest code for gallery page
+                        window.setTimeout(function () {cambio.changePintrestButton($('#knot').data('knot')); }, 500);
+                        $('#knot').bind('slideChange', function (event, index) {
+                            window.setTimeout(function () {cambio.changePintrestButton($('#knot').data('knot')); }, 500);
+                        });
                     }
                 }
                 //****************************************************
@@ -418,11 +571,9 @@ var cambioLightbox = {
         this.slideFix++;
         if (this.slideFix < 10) {
             if ($('#knot').length && $('#knot .aol-knot-slide').length) {
-                console.log('Setting gallery image size');
                 $('#knot .aol-knot-slide').css('width', $('#knot').width()).css('height', $('#knot').height());
                 $('#knot .aol-knot-slides').css('width', $('#knot').width() * $('#knot .aol-knot-slide').length);
             } else {
-                console.log('Set timeout for gallery fix');
                 var that = this;
                 window.setTimeout(function () {
                     that.fixSlideshowImageSize();
@@ -467,7 +618,6 @@ var cambioLightbox = {
             }
         });
         if (found !== 0) {
-            console.log('Next link ' + nextLink + ' Prev link ' + prevLink);
             if (prevLink !== '') {
                 $('.articlePrev').attr('href', prevLink);
                 $('.articlePrev').attr('id', prevId);
@@ -488,13 +638,15 @@ var cambioLightbox = {
             } else {
                 $('.articleNext').hide();
             }
-        } else {
-            console.log('Not found - dont replace link');
         }
     },
 
     //Resets box links (resets default permalink and fires js function that pulls data and displays in lightbox)
     resetBoxLink : function (elem) {
+        //Stop playing video
+        if (gridVideoPlayer !== null) {
+            gridVideoPlayer.pause();
+        }
         //Check if it is article prev/next link
         this.elem = elem;
         //Check link type (if next or previous slide animation will be applied)
@@ -509,7 +661,6 @@ var cambioLightbox = {
         this.currentUrl = $(this.elem).attr('href').replace(this.blogUrl, '').replace('http://www.cambio.com', '');
         //Ger parent class oif list post through which next prev button should be taken
         var c = $(this.elem).attr('class');
-        console.log('Classes ' + c);
         var tmpc = c.split(' ');
         this.nextPrevListClass = '';
         for (var i = 0; i < tmpc.length; i++) {
@@ -522,8 +673,6 @@ var cambioLightbox = {
         var tmp = elemId.split('_');
         this.type = tmp[1];
         this.id = tmp[2];
-        console.log('Loading data for ' + this.type);
-
         this.openLightbox();
         var html = '<div class="lbContent">Display ' + this.type + ' for ' + this.id + ' in AJAX<br />';
         switch (this.type) {
@@ -552,7 +701,6 @@ var cambioLightbox = {
 
             var date = year + '/' + month + '/' + day;
             var reGoodDate = /^[0-9]{4}[/][0-9]{2}[/][0-9]{2}$/;
-            console.log('Ajax article link date:' + date);
             if (reGoodDate.test(date) === false) {
                 //alert('An old permalink format - dont run ajax call just display page: '+this.currentUrl);
                 window.location.href = this.currentUrl;
@@ -585,6 +733,8 @@ var cambioLightbox = {
                 catReal = cat;
             }
             var catName = $('.hiddenCatCnt:last .catName').html();
+            //Render share bar
+            cambio.renderShareBar();
             //Only if overlay load (AJAX load is set)
             if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1) {
                 console.log('Run script that will load category ( ' + cat + ' )page in background');
@@ -648,6 +798,10 @@ var cambioLightbox = {
                             $('#lbClose').click(function () {
                                 that.closeLightbox();
                             });
+                            //Fix side ad
+                            if (typeof (cambio) !== 'undefined') {
+                                cambio.fixTagPageAd();
+                            }
                         });
 
                     },
@@ -657,10 +811,12 @@ var cambioLightbox = {
                 });
             } else {
                 //If wallpaper ad is set adjust position of next/prev article
-                if (cambio.wallpaperAd === 1) {
-                    window.setTimeout(function () {
-                        $('.articleNext, .articlePrev').css('top', $('.relatedTags').position().top + 'px');
-                    }, 2000);
+                if (cambio.wallpaperAd === 1) { 
+                    $('.lbTopCnt').append($('.articleNext, .articlePrev'));
+                    $('.lbTopCnt').css('position', 'relative');
+                    $('.articleNext, .articlePrev').css('bottom', '0px').css('top', 'auto').css('left', 'auto').css('right', 'auto');
+                    $('.articleNext').css('left', '0px');
+                    $('.articlePrev').css('right', '0px'); 
                 }
                 $('.body:first').css('overflow', 'hidden');
                 //Set exit button to go to home page or category
@@ -669,16 +825,15 @@ var cambioLightbox = {
                     window.location.href = '/' + catReal + '/';
                 });
             }
-        } else {
-            console.log('Dont load category in background');
         }
     },
 
     //Sets margin for grid element (some content might be covered by header and footer)
     setMainMargin : function () {
-        $('#main').css('marginTop', $('.header').height() + 3);
-        $('#main').css('marginBottom', $('.footer').height());
-        //console.log('set margin');
+        if (cambio.wallpaperAd === 0) {
+            $('#main').css('marginTop', $('.header').height() + 3);
+            $('#main').css('marginBottom', $('.footer').height());
+        }
     },
 
     checkAndMovePictelaAd : function () {
@@ -709,8 +864,8 @@ var cambioLightbox = {
     },
 
     checkAndMovePushDown : function () {
-        console.log('Checking push down ad');
-        if ($('.articleCnt').length) {
+        console.log('Checking push down ad');  
+        if (cambio.wallpaperAd === 0 && $('.articleCnt').length) {
             if (this.pushCounter === 10) {
                 return false;
             }
@@ -736,12 +891,23 @@ var cambioLightbox = {
         $('#lbClose').click(function () {
             that.closeLightbox();
         });
-        this.checkAndMovePushDown();
+        
         this.checkAndMovePictelaAd();
         //On box click events
 
         $('body').on('click', '.boxLink', function (event) {
             if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1 || ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic'))) {
+                //Check if url has wallpaper mode
+               /* if (window.wallpaperUrls !== '') {
+                    var i = 0;
+                    for (i = 0; i < window.wallpaperUrls.length; i++) {
+                        console.log('checking against' + window.wallpaperUrls[i]);
+                        if ($(this).attr('href').indexOf(window.wallpaperUrls[i]) > -1) {
+                            console.log('wallpaper ad article');
+                            return true;
+                        }
+                    }
+                } */
                 event.preventDefault();
                 that.resetBoxLink(this);
                 if ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic')) {
@@ -752,9 +918,13 @@ var cambioLightbox = {
                         $('#lbCnt').css('top', '120px');
                     }
                 }
-
             }
+            
         });
+        //Render share bar for tag page
+        if ($('#tag-profile-footer-share').length) {
+            cambio.renderShareBar();
+        }
 
         touchScroll('#lbCnt');
         //On resize check if lightbox properly displayed
@@ -777,6 +947,18 @@ var cambioLightbox = {
                 window.location.href = '/';
             });
         }
+        
+        //change pintrest code for gallery page
+        if ($('#knot').length) {
+            $('#knot').bind('knotReady', function (event, knotObj) {
+                window.setTimeout(function () {cambio.changePintrestButton(knotObj); }, 500);
+                $('#knot').bind('slideChange', function (event, index) {
+                    window.setTimeout(function () {cambio.changePintrestButton($('#knot').data('knot')); }, 500);
+                });
+            });
+        }
+        //Fix top related tags (add more button)
+        cambio.fixRelatedTags();
     }
 };
 
@@ -1001,6 +1183,19 @@ var cambioGrid = {
     }
 };
 
+var Wallpaper = {
+    adCheck: function () {
+        $("#VwP103199Div2 > div").each(function () {
+            var $this = $(this);
+            var top = parseInt($this.css('top'), 10);
+            var width = $this.width();
+            $this.css('top', top + 1);
+            $this.css('width', width + 1);
+        });
+    }
+};
+
+
 //Before displaying page
 $(function () {
     cambio.init();
@@ -1008,4 +1203,7 @@ $(function () {
         cambioGrid.firstLoadInit(window.ad300x250);
     }
     cambioLightbox.init();
+    if (window.wallpaperAd === 1) {
+        setTimeout(Wallpaper.adCheck, 2000);
+    }
 });

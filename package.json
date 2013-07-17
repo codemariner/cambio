@@ -2,8 +2,12 @@
   "name": "cambio",
   "payload": "core",
   "description": "JavaScript for Cambio",
-  "author": "Scott Sayles <ssayles@teamaol.com>",
-  "version": "0.0.1",
+  "author": "Scott Sayles <ssayles@teamaol.com> Rafal Dudek <rafal.dudek@teamaol.com>",
+<<<<<<< HEAD
+  "version": "1.0.5",
+=======
+  "version": "1.0.4",
+>>>>>>> Set version to 1.0.4.
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-compass": "~0.1.3",
