@@ -45,7 +45,9 @@
                 if (_this.$commentsEl) {
                     $('#post-comments').appendTo(this.$commentsEl);
                 }
-                _this.load();
+                setTimeout(function () {
+                    cambio.postComments.load();
+                }, 500);
             });
             $('#login').multiAuth({
                 devId: 'ao10o7QIR1Y5IvQh',
