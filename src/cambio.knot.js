@@ -343,9 +343,8 @@ var cambioJsBottomKnot = function (options) {
             if (typeof(cambio) !== 'undefined' && cambio.wallpaperAd === 1) {
                 settings.scrollParent = $('html, body');
             } else {
-                settings.scrollParent = $fullScreenKnot.scrollParent();
+                settings.scrollParent = $('#lbCnt');
             }
-            console.log($(settings.scrollParent).get(0));
             return settings.scrollParent;
             
         }
