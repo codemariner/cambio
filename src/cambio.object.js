@@ -897,17 +897,12 @@ var cambioLightbox = {
 
         $('body').on('click', '.boxLink', function (event) {
             if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1 || ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic'))) {
-                //Check if url has wallpaper mode
-               /* if (window.wallpaperUrls !== '') {
-                    var i = 0;
-                    for (i = 0; i < window.wallpaperUrls.length; i++) {
-                        console.log('checking against' + window.wallpaperUrls[i]);
-                        if ($(this).attr('href').indexOf(window.wallpaperUrls[i]) > -1) {
-                            console.log('wallpaper ad article');
-                            return true;
-                        }
+                //Check if article should be displayed in wallpaper mode (based on data from wallpaper-tag-articles)
+                if (typeof(window.wallpaperArticles) !== 'undefined' && window.wallpaperArticles.length > 0) {
+                    if (window.wallpaperArticles.indexOf($(this).attr('href')) > -1) {
+                        return true;
                     }
-                } */
+                }
                 event.preventDefault();
                 that.resetBoxLink(this);
                 if ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic')) {
