@@ -587,7 +587,6 @@ var cambioLightbox = {
         if (this.nextPrevListClass === '') {
             return false;
         }
-        console.log('Setting next/prev link ' + this.nextPrevListClass);
         var prevLink = '';
         var nextLink = '';
         var prevTitle = '';
@@ -596,7 +595,6 @@ var cambioLightbox = {
         var prevId = '';
         var found = 0;
         var that = this;
-        console.log('CurrentUrl ' + that.currentUrl);
         $('.' + this.nextPrevListClass + ' a.boxLink:not(.boxTwitter, .boxStatic)').each(function () {
             //console.log($(this).attr('href'));
             if (found !== 2) {
@@ -897,6 +895,10 @@ var cambioLightbox = {
         
         $('body').on('click', '.boxLink', function (event) {
             if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1 || ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic'))) {  
+                if (typeof(window.wallpaperArticles) === 'array' && window.wallpaperArticles.length > 0) {
+                    window.alert('Do not replace link ' + $(this).attr('href'));
+                    
+                }
                 event.preventDefault();
                 that.resetBoxLink(this);
                 if ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic')) {
