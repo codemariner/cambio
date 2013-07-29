@@ -894,7 +894,7 @@ var cambioLightbox = {
         //On box click events
         
         $('body').on('click', '.boxLink', function (event) {
-            if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1 || ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic'))) {  
+            if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1 || ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic'))) {
                 //Check if article should be displayed in wallpaper mode (based on data from wallpaper-tag-articles)
                 if (typeof(window.wallpaperArticles) !== 'undefined' && window.wallpaperArticles.length > 0) {
                     if (window.wallpaperArticles.indexOf($(this).attr('href')) > -1) {
