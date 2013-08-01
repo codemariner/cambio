@@ -106,6 +106,9 @@ var cambioJsBottomKnot = function (options) {
                 },
                 type: {
                     path: '[data-type]'
+                },
+                player: {
+                    path: 'a[data-embed]'
                 }
             },
             noDims: true,
