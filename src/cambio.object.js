@@ -167,7 +167,6 @@ var cambio = {
         //Facebook
         if (typeof(FB) !== 'undefined') {
             FB.XFBML.parse($('#lbBody')[0]);
-
         } else {
             $.getScript("http://connect.facebook.net/en_US/all.js#xfbml=1", function () {
                 FB.XFBML.parse($('#lbBody')[0]);
@@ -176,10 +175,8 @@ var cambio = {
         //Twitter
         if (typeof(twttr) !== 'undefined') {
             twttr.widgets.load();
-            console.log('Parsing twitter');
         } else {
             $.getScript('http://platform.twitter.com/widgets.js');
-            console.log('Parsing twitter after load js');
         }
         //Google
         var gObj = {
@@ -253,6 +250,13 @@ var cambio = {
                     }
                 });
             }
+        }
+    },
+    
+    //Fixes height of left and right rail for article
+    fixLeftRight : function () {
+        if ($('#lbContent.article')) {
+            $('.lbLeft').css('minHeight', $('.lbRight').height());
         }
     }
     
@@ -525,6 +529,7 @@ var cambioLightbox = {
                 //****************************************************
                 //AFTER ARTICLE GETS LOADED FOR SCOTT'S CODE
                 if (that.type === 'article') {
+                    cambio.fixLeftRight();
                     if ($('#knot').length) {
                         that.slideFix = 0;
                         that.fixSlideshowImageSize();
@@ -587,7 +592,6 @@ var cambioLightbox = {
         if (this.nextPrevListClass === '') {
             return false;
         }
-        console.log('Setting next/prev link ' + this.nextPrevListClass);
         var prevLink = '';
         var nextLink = '';
         var prevTitle = '';
@@ -596,7 +600,6 @@ var cambioLightbox = {
         var prevId = '';
         var found = 0;
         var that = this;
-        console.log('CurrentUrl ' + that.currentUrl);
         $('.' + this.nextPrevListClass + ' a.boxLink:not(.boxTwitter, .boxStatic)').each(function () {
             //console.log($(this).attr('href'));
             if (found !== 2) {
@@ -864,26 +867,26 @@ var cambioLightbox = {
     },
 
     checkAndMovePushDown : function () {
-        console.log('Checking push down ad');  
         if (cambio.wallpaperAd === 0 && $('.articleCnt').length) {
             if (this.pushCounter === 10) {
                 return false;
             }
             if ($('#eyeDiv').length) {
-                $('#eyeDiv').prependTo('.lbTopCnt div:first');
+                $('#eyeDiv').prependTo($('.lbTopCnt div:first'));
                 return true;
             } else {
-                this.pushCounter++;
                 var that = this;
+                that.pushCounter++;  
                 window.setTimeout(function () {
                     that.checkAndMovePushDown();
-                }, 1000);
+                }, 300);
             }
         }
     },
 
     //Init lightbox and links that should be displyed in lightbox function
     init : function () {
+        
         //Save base url of the page
         this.baseUrl = window.location.href;
         var that = this;
@@ -891,10 +894,10 @@ var cambioLightbox = {
         $('#lbClose').click(function () {
             that.closeLightbox();
         });
-        
+
         this.checkAndMovePictelaAd();
         //On box click events
-
+        
         $('body').on('click', '.boxLink', function (event) {
             if (typeof (cambio) !== 'undefined' && cambio.overlayLoad === 1 || ($(this).hasClass('boxTwitter') || $(this).hasClass('boxStatic'))) {
                 //Check if article should be displayed in wallpaper mode (based on data from wallpaper-tag-articles)
@@ -954,6 +957,8 @@ var cambioLightbox = {
         }
         //Fix top related tags (add more button)
         cambio.fixRelatedTags();
+        //Fix right and left rail position
+        cambio.fixLeftRight();
     }
 };
 
