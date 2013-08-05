@@ -93,7 +93,8 @@ module.exports = function (grunt) {
                     FB: true,
                     STMBLPN: true,
                     isTouchDevice: true,
-                    cambioLightbox: true
+                    cambioLightbox: true,
+                    cambioVideo: true
                 }
             },
             dist: ['src/cambio.*.js'],

@@ -167,7 +167,6 @@ var cambio = {
         //Facebook
         if (typeof(FB) !== 'undefined') {
             FB.XFBML.parse($('#lbBody')[0]);
-
         } else {
             $.getScript("http://connect.facebook.net/en_US/all.js#xfbml=1", function () {
                 FB.XFBML.parse($('#lbBody')[0]);
@@ -176,10 +175,8 @@ var cambio = {
         //Twitter
         if (typeof(twttr) !== 'undefined') {
             twttr.widgets.load();
-            console.log('Parsing twitter');
         } else {
             $.getScript('http://platform.twitter.com/widgets.js');
-            console.log('Parsing twitter after load js');
         }
         //Google
         var gObj = {
@@ -253,6 +250,13 @@ var cambio = {
                     }
                 });
             }
+        }
+    },
+    
+    //Fixes height of left and right rail for article
+    fixLeftRight : function () {
+        if ($('#lbContent.article')) {
+            $('.lbLeft').css('minHeight', $('.lbRight').height());
         }
     }
     
@@ -525,6 +529,7 @@ var cambioLightbox = {
                 //****************************************************
                 //AFTER ARTICLE GETS LOADED FOR SCOTT'S CODE
                 if (that.type === 'article') {
+                    cambio.fixLeftRight();
                     if ($('#knot').length) {
                         that.slideFix = 0;
                         that.fixSlideshowImageSize();
@@ -952,6 +957,8 @@ var cambioLightbox = {
         }
         //Fix top related tags (add more button)
         cambio.fixRelatedTags();
+        //Fix right and left rail position
+        cambio.fixLeftRight();
     }
 };
 

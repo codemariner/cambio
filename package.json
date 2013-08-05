@@ -3,7 +3,7 @@
   "payload": "core",
   "description": "JavaScript for Cambio",
   "author": "Scott Sayles <ssayles@teamaol.com> Rafal Dudek <rafal.dudek@teamaol.com>",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-compass": "~0.1.3",
