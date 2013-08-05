@@ -21,13 +21,9 @@
                 // article is being closed so make sure we save the
                 // livefyre comments widget and have it stop pulling the stream
                 _this.$commentsEl = $('#post-comments .fyre');
-                
-                //****************************************
-                //Temporary disabled because causing problem (we cannot close article in overlay)
-                //if (_this.widget) {
-                //    _this.widget.stop();
-                //}
-                //***********************************
+                if (_this.widget) {
+                    _this.widget.stop();
+                }
             
             });
 
