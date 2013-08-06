@@ -255,9 +255,11 @@ var cambio = {
     
     //Fixes height of left and right rail for article
     fixLeftRight : function () {
-        if ($('#lbContent.article')) {
-            $('.lbLeft').css('minHeight', $('.lbRight').height());
-        }
+        window.setTimeout(function () {
+            if ($('#lbContent.article')) {
+                $('.lbLeft').css('minHeight', $('.lbRight').height());
+            }
+        }, 1000);
     }
     
 
