@@ -18,8 +18,6 @@ var findLauncher = function () {
 };
 
 var cambioJsBottomKnot = function (options) {
-    console.log('HERE js bottom code');
-    console.log(options);
     var galleryId = '';
     var opts = '';
     $('#knot').cambioEmbeddedGallery(options);
@@ -87,7 +85,7 @@ var cambioJsBottomKnot = function (options) {
     
         var settings = {
             data: '.photo-gallery',
-            wrapperHeight: '600',
+            wrapperHeight: '630',
             contentMap: {
                 'media-id': {
                     path: '[data-media-id]'
@@ -245,6 +243,9 @@ var cambioJsBottomKnot = function (options) {
                 },
                 type: {
                     path: '[data-type]'
+                },
+                player: {
+                    path: 'a[data-embed]'
                 },
                 rightRailHtml: [
                     '<div class="aol-knot-fullscreen-exit">',
