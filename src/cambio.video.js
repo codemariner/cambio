@@ -1,7 +1,7 @@
 function videoPlayerStart(obj) {
     $('.videoCnt .videoLoadingMessage').remove();
     var title = obj.title;
-    var currentUrl = window.location.protocol + '//' + window.location.host + '/video/' + cambioVideo.currentType + '/' + cambioVideo.currentCategory + '/' + cambioVideo.currentPlay + '/';
+    var currentUrl = window.location.protocol + '//' + window.location.host + '/videos/' + cambioVideo.currentType + '/' + cambioVideo.currentCategory + '/' + cambioVideo.currentPlay + '/';
     //Add change title
     $(".videoTitle").html(title);
     //Change url
