@@ -59,7 +59,11 @@ var cambioVideo = {
     //Inits video object and all functionalities
     init : function () {
         //Count pixels foir single carousel move
-        this.carouselMove = Math.floor($('.videoCarouselCnt').width() / 161) * 161;
+        var itemWidth = 150;
+        if ($('.videoItem').length) {
+            itemWidth = $('.videoItem').eq(0).width();
+        }
+        this.carouselMove = Math.floor($('.videoCarouselCnt').width() / itemWidth) * itemWidth;
         var tmp = window.location.pathname.split('/');
         //Set current video properties if passed in URL
         if (tmp.length >= 5) {
@@ -321,8 +325,10 @@ var cambioVideo = {
     //Plays particular video
     playVideo : function (id) {
         if (id !== null) {
+            var videoWidth = $('.playerCnt').width();
+            var videoHeight = $('.playerCnt').height();
             $('.playerCnt, .videoTitle').html('');
-            var src = 'http://pshared.5min.com/Scripts/PlayerSeed.js?sid=577&width=900&height=500&playList=' + id + '&shuffle=0&searchMode=0&autoStart=true&colorPallet=#33ccff&vcdBgColor=#000&hasCompanion=false&relatedMode=0&playerActions=16&onTimeUpdate=videoPlayerTimeChange&onVideoDataLoaded=videoPlayerStart&defer=defer';
+            var src = 'http://pshared.5min.com/Scripts/PlayerSeed.js?sid=577&width=' + videoWidth + '&height=' + videoHeight + '&playList=' + id + '&shuffle=0&searchMode=0&autoStart=true&colorPallet=#33ccff&vcdBgColor=#000&hasCompanion=false&relatedMode=0&playerActions=16&onTimeUpdate=videoPlayerTimeChange&onVideoDataLoaded=videoPlayerStart&defer=defer';
             var script = document.createElement('script');
             script.setAttribute('type', 'text/javascript');
             script.setAttribute('src', src);
