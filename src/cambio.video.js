@@ -344,6 +344,7 @@ var cambioVideo = {
     
     //Changes share bar
     changeShareBar : function (url, title) {
+        $('#main').css('overflow', 'visible');
         $('.videoShare').html('<ul><li><a data-url="' + url + '" data-text="' + title.replace(/"/g, "&quot;") + '" href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a></li><li><fb:like layout="button_count" href="' + url + '" ref="top_left"></fb:like></li></ul>');
         //Facebook
         if (typeof(FB) !== 'undefined') {
