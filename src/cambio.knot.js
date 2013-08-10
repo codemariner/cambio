@@ -28,7 +28,7 @@ var cambioJsBottomKnot = function (options) {
     if ($article.length) {
         var nextLink = $article.data('gallery-next');
         if (nextLink) {
-            var nextCopy = $article.data('gallery-next-copy') ? 'Next Gallery' : $article.data('gallery-next-copy');
+            var nextCopy = $article.data('gallery-next-copy') ? $article.data('gallery-next-copy') : 'More Photos';
             optsWithNext.nextGallery = nextLink;
             optsWithNext.nextGalleryCopy = nextCopy;
         }
