@@ -172,7 +172,7 @@ var cambioJsBottomKnot = function (options) {
                     nextLinkCheck($embeddedKnot, context.context, options);
                     $embeddedKnot.on('slideChange', function (evt) {
                         setCounter(context.context);            
-                        nextLinkCheck($embeddedKnot, context.context);
+                        nextLinkCheck($embeddedKnot, context.context, options);
                     });
                 };
             } (options))
