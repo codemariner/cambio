@@ -18,15 +18,28 @@ var findLauncher = function () {
 };
 
 var cambioJsBottomKnot = function (options) {
-    console.log('HERE js bottom code');
-    console.log(options);
     var galleryId = '';
     var opts = '';
-    $('#knot').cambioEmbeddedGallery(options);
-    options.shareTemplateId = 'share-bar-tmpl';
+    var optsWithNext = {};
+
+    // see if the article specifies a next gallery/article link
+    $.extend(optsWithNext, options);
+    var $article = $('.articleCnt');
+    if ($article.length) {
+        var nextLink = $article.data('gallery-next');
+        if (nextLink) {
+            var nextCopy = $article.data('gallery-next-copy') ? $article.data('gallery-next-copy') : 'More Photos';
+            optsWithNext.nextGallery = nextLink;
+            optsWithNext.nextGalleryCopy = nextCopy;
+        }
+    }
+
+    $('#knot').cambioEmbeddedGallery(optsWithNext);
+    optsWithNext.shareTemplateId = options.shareTemplateId = 'share-bar-tmpl';
+
     var $launcher = findLauncher();
     if ($launcher) {
-        $('#knot-gallery').cambioFullscreenGallery(options, $launcher);
+        $('#knot-gallery').cambioFullscreenGallery(optsWithNext, $launcher);
     }
     $launcher = $('#post-gallery a');
     if ($launcher.length) {
@@ -45,7 +58,7 @@ var cambioJsBottomKnot = function (options) {
         if (dataId) {
             galleryId = $fsLauncher.data('gallery-id');
             opts = {};
-            $.extend(opts, options);
+            $.extend(opts, optsWithNext);
             if (galleryId) {
                 opts.galleryId = galleryId;
                 opts.knot.galleryId = galleryId;
@@ -72,6 +85,44 @@ var cambioJsBottomKnot = function (options) {
         cambio.fullscreenGalleries = [];
     });
 
+    var nextLinkCheck = function ($slideshow, context, options) {
+        if (!options.nextGallery) {
+            return;
+        }
+        if (context.activeSlide + 1 === context.slideCount) {
+            if ($slideshow.find('.gallery-continue').length) {
+                return;
+            }
+            var $rightArrow = $slideshow.find('.icon-angle-right');
+            $rightArrow.parents('.aol-knot-slide-container,.aol-knot-fullscreen-slider').prepend([
+                '<div class="gallery-continue" style="display:none;position:absolute;top:36%;right:4px;z-index:99999999">',
+                '<div style="dislay:table-row">',
+                '<div class="continue-left" style="display:table-cell;width:34px;height:73px;background: url(http://o.aolcdn.com/os/cambio/cambio3/images/garrow-left.png) no-repeat;"><div style="width:34px"></div></div>',
+                '<a style="display:table-cell;height:73px;background: url(http://o.aolcdn.com/os/cambio/cambio3/images/garrow-bg.png) repeat;color:#333;font-size:1.2em;white-space:nowrap;line-height:70px;" href="',
+                options.nextGallery,
+                '">',
+                options.nextGalleryCopy,
+                '</a>',
+                '<div class="continue-right" style="width:43px;height:73px;display:block;background: url(http://o.aolcdn.com/os/cambio/cambio3/images/garrow-right.png) no-repeat;display:table-cell"><div style="width:43px"></div></div>',
+                '</div>',
+                '<div class="icon-close" style="position:absolute;left:-5px;top:0;width:30px;height:33px;"></div>',
+                '</div>'
+            ].join(''));
+            var $next = $slideshow.find('.gallery-continue');
+            var width = $next.width();
+            $next.width(0);
+            $next.show();
+            $next.animate({width: width + 'px'});
+            $rightArrow.fadeOut();
+            var $close = $next.find('.icon-close').on('click', function (evt) {
+                evt.preventDefault();
+                $next.animate({width: 0}, function () {
+                    $next.hide();
+                    $rightArrow.fadeIn();
+                });
+            });
+        }
+    };
 
     //***********************************************
 
@@ -106,18 +157,25 @@ var cambioJsBottomKnot = function (options) {
                 },
                 type: {
                     path: '[data-type]'
+                },
+                player: {
+                    path: 'a[data-embed]'
                 }
             },
             noDims: true,
             refreshDivId: $('#ajaxAdDevil').length ? 'ajaxAdDevil' : 'adsDiv1',
             refreshCount: 1,
             after: '<div class="aol-knot-counter"></div>',
-            onUiBuilt: function (context) {
-                setCounter(context.context);
-                $embeddedKnot.on('slideChange', function (evt) {
-                    setCounter(context.context);            
-                });
-            }
+            onUiBuilt: (function (options) {
+                return function (context) {
+                    setCounter(context.context);
+                    nextLinkCheck($embeddedKnot, context.context, options);
+                    $embeddedKnot.on('slideChange', function (evt) {
+                        setCounter(context.context);            
+                        nextLinkCheck($embeddedKnot, context.context, options);
+                    });
+                };
+            } (options))
         };
         if (options && options.knot) {
             settings = $.extend(settings, options.knot);
@@ -243,6 +301,9 @@ var cambioJsBottomKnot = function (options) {
                 type: {
                     path: '[data-type]'
                 },
+                player: {
+                    path: 'a[data-embed]'
+                },
                 rightRailHtml: [
                     '<div class="aol-knot-fullscreen-exit">',
                     '</div>',
@@ -308,6 +369,8 @@ var cambioJsBottomKnot = function (options) {
             settings.lastScrollTop = $scrollParent[0].scrollTop;
             $scrollParent.animate({scrollTop: $fullScreenKnot.position().top}, 'slow');  
             $fullScreenKnot.data('knot')._track();
+            var context = $fullScreenKnot.data('knotFullscreen').context;
+            nextLinkCheck($fullScreenKnot, context, options);
         });
 
         $fullScreenKnot.on('exitedFullscreen', function () {
@@ -326,14 +389,15 @@ var cambioJsBottomKnot = function (options) {
         });
         
         $fullScreenKnot.on('slideChange', function (event, index, dir) {
-            console.log(event);
             window.setTimeout(function () { cambio.changePintrestButton($('#' + event.target.id).data().knot); }, 500);
+            var context = $fullScreenKnot.data('knotFullscreen').context;
+            nextLinkCheck($fullScreenKnot, context, options);
         });
         
-        $fullScreenKnot.on('transitionComplete', function (a, index) {
-            window.alert('transition complete' + index);    
-            console.log(index);
-        });
+//        $fullScreenKnot.on('transitionComplete', function (a, index) {
+//            window.alert('transition complete' + index);    
+//            console.log(index);
+//        });
 
         function getScrollParent() {
             if (settings.scrollParent) {
