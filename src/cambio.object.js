@@ -318,17 +318,19 @@ var cambioLightbox = {
     //Closes lightbox
     closeLightbox : function () {
         $(this).trigger('cambio.lightbox.beforeClose');
-        $('#lbCnt').fadeOut('fast', function () {
-            $('#lbContent').html('');
-            $('#lbBackground').fadeOut('fast');
-        });
-        $('body').css('overflow', 'auto');
-        //Remove gallery class from html and body elements to enable scroll
-        $('body, html').removeClass('knot-fullscreen');
         document.title = this.baseTitle;
         window.history.pushState(2, document.title, this.baseUrl);
         //Back to main page omni setup
-        this.omniMain();
+        this.omniMain(); 
+        var that = this;
+        $('#lbCnt').fadeOut('fast', function () {
+            $('#lbContent').html('');
+            $('#lbBackground').fadeOut('fast');
+            $(that).trigger('cambio.lightbox.afterClose');
+        });
+        $('body').css('overflow', 'auto');
+        //Remove gallery class from html and body elements to enable scroll
+        $('body, html').removeClass('knot-fullscreen');      
     },
 
     //Function to place 5 min script after content has been loaded and animation ended
