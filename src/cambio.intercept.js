@@ -168,7 +168,7 @@ var cambioIntercept = {
         $.ajax({
             dataType : 'jsonp',
             crossDomain : true,
-            url : 'http://industry.cpapi.aol.com/cambio/intercept/intercept.php?action=' + action,
+            url : 'http://extension.cambio.com/intercept/intercept.php?action=' + action,
             type : 'GET'
         });
         
