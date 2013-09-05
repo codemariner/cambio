@@ -1,5 +1,6 @@
-var switchTagFilter = function (tagFilter) {
-    console.log("I should switch to " + tagFilter);
+var switchTagBody = function (selector) {
+    $('.tag-tab-body').hide();
+    $(selector).show();
 };
 
 $(function () {
@@ -10,8 +11,8 @@ $(function () {
         if ($parent.hasClass('active')) {
             return;
         }
-        var tagFilter = $this.data('tag-filter');
-        switchTagFilter(tagFilter);
+        var selector = $this.data('tag-body-selector');
+        switchTagBody(selector);
 
         $parent.siblings('li.active').removeClass('active');
         $parent.addClass('active');
