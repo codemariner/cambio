@@ -32,6 +32,8 @@ $(function () {
             if (cambio.postComments.widget) {
                 cambio.postComments.widget.resume();
             }
+
+            cambio.postComments.tagTabActivated = true;
         }
         else {
             cambio.postComments.$commentsEl = $('#post-comments .fyre');
@@ -39,6 +41,8 @@ $(function () {
                 cambio.postComments.widget.stop();
             }
             $('#post-comments').attr('id', 'social-comments-disabled');
+
+            cambio.postComments.tagTabActivated = false;
         }
 
         $parent.siblings('li.active').removeClass('active');
