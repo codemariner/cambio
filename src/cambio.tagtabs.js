@@ -48,4 +48,12 @@ $(function () {
         $parent.siblings('li.active').removeClass('active');
         $parent.addClass('active');
     });
+
+    $('.hidden-if-empty-tag-link').each(function (index, element) {
+        var $this = $(this);
+        var selector = $this.data('selector');
+        if (!selector || !$(selector).length) {
+            $this.hide();
+        }
+    });
 });
