@@ -43,6 +43,7 @@ module.exports = function (grunt) {
                     'src/cambio.knot.js',
                     'src/cambio.video.js',
                     'src/cambio.chartbeat.js',
+                    'src/cambio.tagtabs.js',
                     'src/cambio.intercept.js'
                 ],
                 dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
