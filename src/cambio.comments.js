@@ -25,6 +25,14 @@
                     _this.widget.stop();
                 }
             
+                if (_this.tagTabActivated) {
+                    if (_this.$commentsEl) {
+                        $('#post-comments').appendTo(this.$commentsEl);
+                    }
+                    setTimeout(function () {
+                        cambio.postComments.load();
+                    }, 500);
+                }
             });
 
             $lightbox.on('cambio.lightbox.afterOpen', function () {
