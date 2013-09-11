@@ -13,7 +13,6 @@ var cambioIntercept = {
              //If not set it
             if (cookie === null) {
                 $.cambio.setCookie('cambioIntercept', 101 - this.postNum, this.cookieExpire, ';domain=.cambio.com;path=/');
-                return true;
             } else {
                 cookie = parseInt(cookie, 10);
             }
@@ -75,35 +74,39 @@ var cambioIntercept = {
     
     getFirstTag : function () {
         var tag = 'Cambio';
-        if ($('.relatedTags a:first').html()) {
+        if ($('.relatedTags a:first').length) {
             tag = this.capitaliseFirstLetters($('.relatedTags a:first').html());
         }
         return tag;
     },
     
-    displayIntercept : function () {  
-        var code = '<div id="cambioIntercept"><h2>Like or Follow us to be first to know when news breaks on <span>' + this.getFirstTag() + '</span></h2>';
-        code += '<div class="likeButtons"></div>';
-        code += '<div class="buttons"><ul><li><a id="interceptAlready" href="#">I already like or follow Cambio</a></li><li><a id="interceptNo" href="#">No thanks</a></li></ul></div></div>';
-        $('body').eq(0).append(code);
-        $('#cambioIntercept').css('left', $(window).width() / 2 - $('#cambioIntercept').width()  + 80 + 'px');
-        //$('#cambioIntercept').css('top', $(window).height() / 2 - $('#cambioIntercept').height() / 2 + 'px');
-        this.addShare();
+    displayIntercept : function () {        
         var that = this;
-        //add code to buttons
-        $('#interceptAlready').click(function (event) {
-            event.preventDefault();
-            that.alreadyLikeIntercept();
+        $.ajax({
+            url : '/intercept/',
+            type : 'GET',
+            success : function (code) { 
+                $('body').eq(0).append(code);
+                $('#cambioIntercept').css('left', $(window).width() / 2 - $('#cambioIntercept').width()  + 80 + 'px');
+                that.addShare();
+                if ($('#cambioIntercept .firstTag').length) {
+                    $('#cambioIntercept .firstTag').html(that.getFirstTag());
+                }
+                //add code to buttons
+                $('#interceptAlready').click(function (event) {
+                    event.preventDefault();
+                    that.alreadyLikeIntercept();
+                });
+                $('#interceptNo').click(function (event) {
+                    event.preventDefault();
+                    that.postponeIntercept();
+                });
+                $('#cambioIntercept').fadeIn(that.animationSpeen);
+            }
         });
-        $('#interceptNo').click(function (event) {
-            event.preventDefault();
-            that.postponeIntercept();
-        });
-        $('#cambioIntercept').fadeIn(this.animationSpeen);
     },
     
     addShare : function () {
-        $('#cambioIntercept .likeButtons').html('<ul><li><fb:like layout="button_count" href="https://www.facebook.com/cambioconnect" ref="intercept"></fb:like></li><li><a href="https://twitter.com/cambio" class="twitter-follow-button" data-show-count="true"  data-show-screen-name="false" data-dnt="true"></a></li></ul>');
         //Facebook
         if (typeof(FB) !== 'undefined') {
             FB.XFBML.parse($('.videoShare')[0]);
