@@ -126,7 +126,7 @@ var cambioCB = {
 };
 $(function () {
     cambioCB.init();    
-    $(cambioLightbox).on('cambio.lightbox.articleLoaded', function () {
+    $(cambioLightbox).on('cambio.lightbox.articleLoadedAnimationEnded', function () {
         cambioCB.init();        
     });    
     $(cambioLightbox).on('cambio.lightbox.afterClose', function () {

@@ -397,6 +397,8 @@ var cambioLightbox = {
             }, 600, function () {
                 if (that.loadedData === 0) {
                     $('#lbContent').html(loadHTML);
+                } else {
+                    $(that).trigger('cambio.lightbox.articleLoadedAnimationEnded');
                 }
                 $('#lbCnt').show("slide", {
                     direction : "right"
@@ -417,6 +419,8 @@ var cambioLightbox = {
             }, 600, function () {
                 if (that.loadedData === 0) {
                     $('#lbContent').html(loadHTML);
+                } else {
+                    $(that).trigger('cambio.lightbox.articleLoadedAnimationEnded');
                 }
                 $('#lbCnt').show("slide", {
                     direction : "left"
@@ -437,6 +441,9 @@ var cambioLightbox = {
                 $('#lbCnt').fadeIn(400, function () {
                     if (that.loadedData === 0) {
                         $('#lbContent').html(loadHTML);
+                        
+                    } else {
+                        $(that).trigger('cambio.lightbox.articleLoadedAnimationEnded');
                     }
                     that.animationEnd = 1;
                     that.replace5minScripts();
@@ -508,6 +515,7 @@ var cambioLightbox = {
                 //5 min palyer script replace
                 if (that.animationEnd === 1) {
                     that.replace5minScripts();
+                    $(that).trigger('cambio.lightbox.articleLoadedAnimationEnded');
                 }
                 //Set class for particular content
                 $('#lbContent').attr('class', that.type);
