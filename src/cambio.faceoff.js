@@ -7,11 +7,14 @@ var cambioFaceOff = {
     slides : [],
     pages : [],
     userVotes : [],
-    fbAppId : '1431201983771924',
+    instructionBox : 0, //Flag tells that instruction box is on
+    firstLoad : 1,
     
     //Initialize object and display it
     init : function () {
         //Check if faceoff elements on the page
+        this.instructionBox = 0;
+        this.firstLoad = 1;
         if ($('.faceOff').length) {
             //Check if hash set
             if (window.location.hash) {
@@ -77,8 +80,6 @@ var cambioFaceOff = {
             type : 'GET',
             dataType : 'json',
             success : function (res) {
-                console.log('Request success ' + '/faceoffresults/?faceoff=' + that.galleryId);
-                console.log(res);
                 var i = 0;
                 for (i; i < that.slides.length; i++) {
                     if (typeof(res[i]) !== 'undefined') {
@@ -214,10 +215,45 @@ var cambioFaceOff = {
         //Update URL (add hash)
         window.location.hash = '#' + this.currentPage;
         this.equalizeImageBoxes();
+        if (this.firstLoad === 0) {
+            this.countPageView();
+            this.refreshAd();
+        } else {
+            this.firstLoad = 0;
+            $('.faceOffState').show();
+            $('.faceOffLoadingMsg').hide();
+        }
+    },
+    
+    countPageView : function () {
+        if (window.s_265) {
+            window.s_265.prop1 = 'cam : quick_read';
+            //if(this.type==='twitter')
+            window.s_265.prop2 = 'cam : faceoff';
+            window.s_265.prop14 = window.location.href;
+            window.s_265.url = window.location.href;
+            window.s_265.pageName = 'cam : ' + document.title;
+            window.s_265.t();
+        }
+        if (window.bN_cfg) {
+            window.bN_cfg.p.dL_dpt = 'faceoff';
+            window.bN_cfg.p.dL_sDpt = 'faceoff';
+            window.bN_cfg.p.dL_cms_ID = 'bsd:0';
+            bN.init(bN_cfg);
+        }  
+    },
+    
+    refreshAd : function () {
+        var adElemId = $('#ajaxAdDevil').length ? 'ajaxAdDevil' : 'adsDiv1';    
+        if (window.adsReloadAd) {
+            window.adsReloadAd(adElemId);
+        } else {
+            console.log('Ad reload function not found');
+        }
     },
     
     displayInstructionBox : function () {
-        console.log('Display instructions box');
+        this.instructionBox = 1;
         //request body
         var that = this;
         $.ajax({
@@ -289,7 +325,6 @@ var cambioFaceOff = {
     },
     
     closeInstructionBox : function (obj) {
-        console.log('Closing instruction box');
         $('#faceOffInstr, #faceOffInstrBg').fadeOut(this.animationSpeed, function () {
             $('#faceOffInstr, #faceOffInstrBg').remove();
         });
@@ -303,8 +338,7 @@ var cambioFaceOff = {
     
     //Displays votes on current page after vote
     displayVotes : function () { 
-        $('#faceOffPage_' + this.currentPage + ' .voteButton').remove();
-       
+        $('#faceOffPage_' + this.currentPage + ' .voteButton').remove();      
         var i = 0;
         var slide = 0;
         var votes = 0;
@@ -351,8 +385,6 @@ var cambioFaceOff = {
         this.sendVote(imageNum);
         //Record votes in user cookie
         this.votesToCookie();
-        //Send data to user's facebook wall
-        this.publishToFBWall(imageNum);
         //Display vote result numbers
         this.displayVotes();
     },
@@ -366,12 +398,6 @@ var cambioFaceOff = {
             url : 'http://extension.cambio.com/faceoff/vote.php?faceoff=' + that.galleryId + '&image=' + imageNum,
             type : 'GET'
         });
-    },
-    
-    //TODO send to user facebook wall for now suspended
-    publishToFBWall : function (imageNum) {
-        var message = 'I just voted for ' + this.slides[imageNum].title + '! ' + this.fbMessage;
-        console.log('Send request to facebook - ' + message);
     }
     
 };

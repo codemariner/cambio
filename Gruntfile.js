@@ -43,8 +43,9 @@ module.exports = function (grunt) {
                     'src/cambio.knot.js',
                     'src/cambio.video.js',
                     'src/cambio.chartbeat.js',
-                    'src/cambio.intercept.js',
-                    'src/cambio.faceoff.js'
+                    'src/cambio.faceoff.js',
+                    'src/cambio.intercept.js'
+                    
                 ],
                 dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
             }
@@ -97,7 +98,8 @@ module.exports = function (grunt) {
                     STMBLPN: true,
                     isTouchDevice: true,
                     cambioLightbox: true,
-                    cambioVideo: true
+                    cambioVideo: true,
+                    cambioFaceOff: true
                 }
             },
             dist: ['src/cambio.*.js'],

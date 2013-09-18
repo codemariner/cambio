@@ -86,6 +86,10 @@ var cambioIntercept = {
             url : '/intercept/',
             type : 'GET',
             success : function (code) { 
+                //don't display intercept when faceoff instruction box is there
+                if (typeof(cambioFaceOff.instructionBox) !== 'undefined' && cambioFaceOff.instructionBox === 1) {
+                    return false;
+                }
                 $('body').eq(0).append(code);
                 $('#cambioIntercept').css('left', $(window).width() / 2 - $('#cambioIntercept').width()  + 80 + 'px');
                 that.addShare();
