@@ -262,7 +262,7 @@ var cambioFaceOff = {
             success : function (code) { 
                 $('body').eq(0).append(code);
                 $('body').eq(0).append('<div class="cambioPopupBg" id="faceOffInstrBg"></div>');
-                $('#faceOffInstr').css('left', $(window).width() / 2 - $('#faceOffInstr').width()  + 80 + 'px');
+                $('#faceOffInstr').css('left', $('#faceOff_' + that.galleryId).offset().left + 80 + 'px').css('top', $(window).height() / 2 - $('#faceOffInstr').height() / 2 + 'px');
                 //add code to buttons
                 $('#faceOffInstrClose').click(function (event) {
                     event.preventDefault();
