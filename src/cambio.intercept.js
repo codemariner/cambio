@@ -5,40 +5,14 @@ var cambioIntercept = {
     delay : 3000,
     cookieExpire : 365,
     
-    setCookie : function (c_name, value, exdays) {
-        var exdate = new Date();
-        exdate.setDate(exdate.getDate() + exdays);
-        var c_value = escape(value) + ((exdays === null) ? "" : "; expires=" + exdate.toUTCString()) + ';domain=.cambio.com;path=/';
-        document.cookie = c_name + "=" + c_value;
-    },
-    
-    getCookie : function (c_name) {
-        var c_value = document.cookie;
-        var c_start = c_value.indexOf(" " + c_name + "=");
-        if (c_start === -1) {
-            c_start = c_value.indexOf(c_name + "=");
-        }
-        if (c_start === -1) {
-            c_value = null;
-        } else {
-            c_start = c_value.indexOf("=", c_start) + 1;
-            var c_end = c_value.indexOf(";", c_start);
-            if (c_end === -1) {
-                c_end = c_value.length;
-            }
-            c_value = unescape(c_value.substring(c_start, c_end));
-        }
-        return c_value;    
-    },
-    
     checkAndDisplayIntercept : function () {
         //Check if cookie set
         if (typeof(this.active) !== 'undefined' && this.active === '1') {
-            var cookie = this.getCookie('cambioIntercept');
+            var cookie = $.cambio.getCookie('cambioIntercept');
             //for user who already liked/followed 
              //If not set it
             if (cookie === null) {
-                this.setCookie('cambioIntercept', 100 - this.postNum, this.cookieExpire);
+                $.cambio.setCookie('cambioIntercept', 101 - this.postNum, this.cookieExpire, ';domain=.cambio.com;path=/');
             } else {
                 cookie = parseInt(cookie, 10);
             }
@@ -49,21 +23,21 @@ var cambioIntercept = {
             if (cookie + 1 >= 100) {
                 this.displayIntercept();
             } else {
-                this.setCookie('cambioIntercept', cookie + 1, this.cookieExpire); 
+                $.cambio.setCookie('cambioIntercept', cookie + 1, this.cookieExpire, ';domain=.cambio.com;path=/'); 
             }
         }
     },
     
     //When user click remain me later reset counter
     postponeIntercept : function () {
-        this.setCookie('cambioIntercept', 100 - this.postponePostNum, this.cookieExpire);
+        $.cambio.setCookie('cambioIntercept', 100 - this.postponePostNum, this.cookieExpire, ';domain=.cambio.com;path=/');
         this.recordUserAction(4);
         this.removeIntercept();
     },
     
     //when user already liked cambio
     alreadyLikeIntercept : function () {
-        this.setCookie('cambioIntercept', 200, this.cookieExpire);
+        $.cambio.setCookie('cambioIntercept', 200, this.cookieExpire, ';domain=.cambio.com;path=/');
         this.recordUserAction(3);
         this.removeIntercept();
     },
@@ -71,7 +45,7 @@ var cambioIntercept = {
     //When user click like 
     likeIntercept : function () {
         //Have to use class name instead of this because this doesn't work with tw and fb button callbacs
-        cambioIntercept.setCookie('cambioIntercept', 200, this.cookieExpire);
+        $.cambio.setCookie('cambioIntercept', 200, this.cookieExpire, ';domain=.cambio.com;path=/');
         //Send request to count user action
         cambioIntercept.recordUserAction(1);
         cambioIntercept.removeIntercept();
@@ -82,7 +56,7 @@ var cambioIntercept = {
     //When user click follow
     followIntercept : function () {
         //Have to use class name instead of this because this doesn't work with tw and fb button callbacs
-        cambioIntercept.setCookie('cambioIntercept', 200, this.cookieExpire);
+        $.cambio.setCookie('cambioIntercept', 200, this.cookieExpire, ';domain=.cambio.com;path=/');
         //Send request to count user action
         cambioIntercept.recordUserAction(2);
         cambioIntercept.removeIntercept();    
@@ -112,6 +86,10 @@ var cambioIntercept = {
             url : '/intercept/',
             type : 'GET',
             success : function (code) { 
+                //don't display intercept when faceoff instruction box is there
+                if (typeof(cambioFaceOff.instructionBox) !== 'undefined' && cambioFaceOff.instructionBox === 1) {
+                    return false;
+                }
                 $('body').eq(0).append(code);
                 $('#cambioIntercept').css('left', $(window).width() / 2 - $('#cambioIntercept').width()  + 80 + 'px');
                 that.addShare();
