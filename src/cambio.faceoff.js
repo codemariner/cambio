@@ -101,7 +101,7 @@ var cambioFaceOff = {
             this.userVotes[i] = 0;
         }
         //get data from cookie
-        var cookie = $.cambio.getCookie('faceoff');
+        var cookie = $.cambio.getCookie('cambiofaceoff');
         if (cookie !== null) {
             this.userVotes = JSON.parse(cookie);
         } else {
@@ -305,7 +305,7 @@ var cambioFaceOff = {
         $('#faceOffInstr li').eq(2).html(code);
         var gObj = {
             "href" : window.location.href,
-            "callback" : cambioFaceOff.closeInstructionBox
+            "onendinteraction" : cambioFaceOff.closeInstructionBox
         };
         if (typeof(gapi) !== 'undefined') {
             $('#faceOffInstr .gPlusShare').each(function () {
@@ -325,10 +325,13 @@ var cambioFaceOff = {
     },
     
     closeInstructionBox : function (obj) {
+        if (typeof(obj) !== 'undefined' && typeof(obj.type) !== 'undefined' && obj.type !== 'confirm') {
+            return false;
+        }    
         $('#faceOffInstr, #faceOffInstrBg').fadeOut(this.animationSpeed, function () {
             $('#faceOffInstr, #faceOffInstrBg').remove();
         });
-        this.votesToCookie();
+        cambioFaceOff.votesToCookie();
     },
     
     animateToCurrentPage : function () {

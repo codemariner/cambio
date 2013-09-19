@@ -10,8 +10,8 @@ var cambioIntercept = {
         if (typeof(this.active) !== 'undefined' && this.active === '1') {
             var cookie = $.cambio.getCookie('cambioIntercept');
             //for user who already liked/followed 
-             //If not set it
-            if (cookie === null) {
+            //If not set it
+            if (cookie === null) {    
                 $.cambio.setCookie('cambioIntercept', 101 - this.postNum, this.cookieExpire, ';domain=.cambio.com;path=/');
             } else {
                 cookie = parseInt(cookie, 10);
@@ -23,7 +23,9 @@ var cambioIntercept = {
             if (cookie + 1 >= 100) {
                 this.displayIntercept();
             } else {
-                $.cambio.setCookie('cambioIntercept', cookie + 1, this.cookieExpire, ';domain=.cambio.com;path=/'); 
+                if (cookie !== null) {
+                    $.cambio.setCookie('cambioIntercept', cookie + 1, this.cookieExpire, ';domain=.cambio.com;path=/'); 
+                }
             }
         }
     },
