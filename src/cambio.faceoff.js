@@ -101,7 +101,7 @@ var cambioFaceOff = {
             this.userVotes[i] = 0;
         }
         //get data from cookie
-        var cookie = $.cambio.getCookie('cambiofaceoff');
+        var cookie = $.cambio.getCookie('cambioFaceoff_' + this.galleryId);
         if (cookie !== null) {
             this.userVotes = JSON.parse(cookie);
         } else {
@@ -119,7 +119,7 @@ var cambioFaceOff = {
     
     //Saves vote into user cookie
     votesToCookie : function () {
-        $.cambio.setCookie('cambiofaceoff', JSON.stringify(this.userVotes), 365);
+        $.cambio.setCookie('cambioFaceoff_' + this.galleryId, JSON.stringify(this.userVotes), 365, ';domain=.cambio.com;path=/');
     },
         
     //Creates pages of slideshow data (creates pairs)
@@ -294,10 +294,14 @@ var cambioFaceOff = {
         $('#faceOffInstr li').eq(1).html(code);
         if (typeof(twttr) !== 'undefined') {
             twttr.widgets.load();
-            twttr.events.bind('tweet', cambioFaceOff.closeInstructionBox);
+            twttr.events.bind('tweet', function (event) {
+                cambioFaceOff.closeInstructionBox();
+            });
         } else {
             $.getScript('http://platform.twitter.com/widgets.js', function () {
-                twttr.events.bind('tweet', cambioFaceOff.closeInstructionBox);
+                twttr.events.bind('tweet', function (event) {
+                    cambioFaceOff.closeInstructionBox();
+                });
             });
         } 
         //Google
