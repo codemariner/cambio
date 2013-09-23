@@ -397,6 +397,8 @@ var cambioLightbox = {
             }, 600, function () {
                 if (that.loadedData === 0) {
                     $('#lbContent').html(loadHTML);
+                } else {
+                    $(that).trigger('cambio.lightbox.articleLoadedAnimationEnded');
                 }
                 $('#lbCnt').show("slide", {
                     direction : "right"
@@ -417,6 +419,8 @@ var cambioLightbox = {
             }, 600, function () {
                 if (that.loadedData === 0) {
                     $('#lbContent').html(loadHTML);
+                } else {
+                    $(that).trigger('cambio.lightbox.articleLoadedAnimationEnded');
                 }
                 $('#lbCnt').show("slide", {
                     direction : "left"
@@ -437,6 +441,9 @@ var cambioLightbox = {
                 $('#lbCnt').fadeIn(400, function () {
                     if (that.loadedData === 0) {
                         $('#lbContent').html(loadHTML);
+                        
+                    } else {
+                        $(that).trigger('cambio.lightbox.articleLoadedAnimationEnded');
                     }
                     that.animationEnd = 1;
                     that.replace5minScripts();
@@ -508,6 +515,7 @@ var cambioLightbox = {
                 //5 min palyer script replace
                 if (that.animationEnd === 1) {
                     that.replace5minScripts();
+                    $(that).trigger('cambio.lightbox.articleLoadedAnimationEnded');
                 }
                 //Set class for particular content
                 $('#lbContent').attr('class', that.type);
@@ -1005,7 +1013,7 @@ var cambioGrid = {
             //console.log('Making request to get more post for infinite scroll - posts to exclude : '+this.articlesToSkip+'page to load :'+this.nextLoadPage)
             var that = this;
             //Display loading message
-            $('.gridScrollShim').append('<div class="loadingMsg"><img src="http://o.aolcdn.com/os/cambio/cambio3/images/loading1" /><br />Loading data</div>');
+            $('.gridScrollShim').append('<div class="loadingMsg"><img src="http://o.aolcdn.com/os/cambio/cambio3/images/loading1" /><br />Loading more. Please wait.</div>');
             //Make ajax request to get more posts
             that.requestedUrl = this.blogUrl + '/scrollhomepage/' + this.articlesToSkip + '/' + this.nextLoadPage + '/';
             //console.log(that.requestedUrl);

@@ -6,6 +6,7 @@ var cambioCB = {
     animationSpeed : 1000,
     timeGap : 15000,
     timeout : null,
+    elementsPrepared : 0,
     
     getOldData : function () {
         this.oldData = this.getHotData(this.elem);
@@ -13,6 +14,7 @@ var cambioCB = {
     
     getNewDataAndReplace : function () {
         if (this.elem !== null) {
+            this.prepareElements();
             this.getOldData();
             var that = this;
             $.ajax({
@@ -86,25 +88,38 @@ var cambioCB = {
     },
     
     prepareElements : function () {
-        $(this.elem).css('position', 'relative');
-        var that = this;
-        that.positions = [];
-        $(this.elem).find('li').each(function (index) {
-            that.positions[index] = $(this).position().top;
-            $(this).css('top', that.positions[index] + 'px');
-            $(this).css('left', '0px');
-           
-        });
-        this.positions.sort(function (a, b) {return a - b; });
-        //If position 7 not set create it
-        if (typeof(that.positions[6]) === 'undefined') {
-            that.positions[6] = that.positions[5] +  that.positions[5] - that.positions[4];
-        }   
-        $('.whatsHot ul li').css('position', 'absolute');
+        if (this.elementsPrepared === 0) {
+            var i = 0;
+            var elemList = [];
+            this.positions = [];
+            var that = this;
+            $(this.elem).css('position', 'relative');
+            $(this.elem).find('li').each(function (index) {
+                elemList[index] = $(this);
+                that.positions[index] = $(this).position().top;
+                //$(this).css('top', that.positions[index] + 'px');
+                //$(this).css('left', '0px');
+               
+            });
+            
+            for (i = 0; i < elemList.length; i++) {
+                $(elemList[i]).css('top', this.positions[i] + 'px');
+                $(elemList[i]).css('left', '0px'); 
+                $(elemList[i]).css('position', 'absolute'); 
+                   
+            }
+            this.positions.sort(function (a, b) {return a - b; });
+            //If position 7 not set create it
+            if (typeof(that.positions[6]) === 'undefined') {
+                that.positions[6] = that.positions[5] +  that.positions[5] - that.positions[4];
+            }
+            this.elementsPrepared = 1;  
+        } 
     },
     
     init : function () {
         this.elem = null;
+        this.elementsPrepared = 0;
         if (this.timeout !== null) {
             window.clearTimeout(this.timeout);
             this.timeout = null;
@@ -117,7 +132,6 @@ var cambioCB = {
             }
         }
         if (this.elem !== null) {
-            this.prepareElements();
             var that = this;
             this.timeout = window.setTimeout(function () {that.getNewDataAndReplace(); }, this.timeGap);
         }
@@ -126,7 +140,7 @@ var cambioCB = {
 };
 $(function () {
     cambioCB.init();    
-    $(cambioLightbox).on('cambio.lightbox.articleLoaded', function () {
+    $(cambioLightbox).on('cambio.lightbox.articleLoadedAnimationEnded', function () {
         cambioCB.init();        
     });    
     $(cambioLightbox).on('cambio.lightbox.afterClose', function () {
