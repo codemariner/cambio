@@ -13,6 +13,7 @@
                 }
                 window.Sailthru.track({
                     domain: "horizon.cambio.com",
+                    spider: false,
                     tags: tags
                 });
             }
