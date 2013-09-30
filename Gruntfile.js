@@ -45,6 +45,7 @@ module.exports = function (grunt) {
                     'src/cambio.chartbeat.js',
                     'src/cambio.tagtabs.js',
                     'src/cambio.faceoff.js',
+                    'src/cambio.horizon.js',
                     'src/cambio.intercept.js'
                     
                 ],
